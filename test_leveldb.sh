@@ -1,8 +1,8 @@
 #/bin/bash
 
-root_dir=/home/xp/YCSB-C-master
+root_dir=/home/xp/flying/YCSB-C-all
 workload=${root_dir}/workloads/workloada.spec
-dbpath=${root_dir}/nvme/ycsb
+dbpath=~/OPTANE/ycsb
 
 rmdb() {
 	if [ -n "$dbpath" ];then
@@ -12,12 +12,12 @@ rmdb() {
 }
 
 if [ $# -lt 1 ]; then
-	echo 'Usage : ./xxxx.sh [rock|level|titan] [load|run]'
+	echo 'Usage : ./xxxx.sh [rocksdb|leveldb|titan] [load|run]'
 	exit 0
 fi
 
 case $1 in
-	'rock')
+	'rocksdb')
 		case $2 in
 			'load')
 			    rmdb

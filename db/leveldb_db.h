@@ -6,16 +6,34 @@
 #define YCSB_C_LEVELDB_DB_H
 
 #include <string>
+#include <sys/time.h>
 
 #include "leveldb/db.h"
 #include "core/db.h"
 #include "core/properties.h"
+#include <fstream>
+#include <unistd.h>
+#include <hdr/hdr_histogram.h>
 
 using std::string;
 
 namespace ycsbc {
     class LevelDB : public DB{
     public:
+        //hdr histogram
+        struct hdr_histogram* hdr_ = NULL;
+        struct hdr_histogram* hdr_last_1s_ = NULL;
+        struct hdr_histogram* hdr_get_= NULL;
+        struct hdr_histogram* hdr_put_= NULL;
+        struct hdr_histogram* hdr_update_ = NULL;
+        struct hdr_histogram* hdr_delete_ = NULL;
+        //int wrapper_hdr_init(struct hdr_histogram** h);
+        void latency_hiccup(uint64_t iops);
+        // hdr output files in ./hdr
+        std::FILE* f_hdr_output_; //xp: hdr histogram of this run
+        std::FILE* f_hdr_hiccup_output_; //xp: 95th lat. of all ops in every 1 second
+
+
         LevelDB(const char *dbfilename, utils::Properties &props);
         int Read(const std::string &table, const std::string &key,
                  const std::vector<std::string> *fields,
@@ -37,6 +55,12 @@ namespace ycsbc {
         void PrintStats();
 
         bool HaveBalancedDistribution();
+
+        uint64_t get_now_micros(){
+            struct timeval tv;
+            gettimeofday(&tv, NULL);
+            return (tv.tv_sec) * 1000000 + tv.tv_usec;
+        }
 
         ~LevelDB();
 

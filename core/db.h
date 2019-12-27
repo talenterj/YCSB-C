@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include <unistd.h>
 
 namespace ycsbc {
 
@@ -93,6 +94,8 @@ class DB {
   virtual bool HaveBalancedDistribution() { return true;};
 
   virtual void PrintStats() {};
+
+  virtual void latency_hiccup(uint64_t iops) {};
   
   virtual ~DB() { }
 };

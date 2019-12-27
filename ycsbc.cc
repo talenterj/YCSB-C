@@ -38,6 +38,11 @@ int DelegateClient(ycsbc::DB *db, ycsbc::CoreWorkload *wl, const int num_ops,
   ycsbc::Client client(*db, *wl);
   int oks = 0;
   int next_report_ = 0;
+  static uint64_t tiktok_start = get_now_micros();
+  static uint64_t last_tik = tiktok_start, tiktoks = 0;
+  static uint64_t iops = 0;
+
+
   for (int i = 0; i < num_ops; ++i) {
 
     if (i >= next_report_) {
@@ -55,7 +60,16 @@ int DelegateClient(ycsbc::DB *db, ycsbc::CoreWorkload *wl, const int num_ops,
       oks += client.DoInsert();
     } else {
       oks += client.DoTransaction();
-    }
+      tiktoks = get_now_micros() - last_tik;
+	  iops++;
+      if (tiktoks >= 1000000) { //xp: 1s
+        db->latency_hiccup(iops);
+        last_tik = get_now_micros();
+        tiktoks = 0;
+		iops = 0;
+      }
+   }
+
   }
   db->Close();
   return oks;
@@ -302,7 +316,7 @@ void Init(utils::Properties &props){
   props.SetProperty("run","false");
   props.SetProperty("threadcount","1");
   props.SetProperty("dboption","0");
-  props.SetProperty("dbstatistics","false");
+  props.SetProperty("dbstatistics","true");
   props.SetProperty("dbwaitforbalance","false");
 }
 
