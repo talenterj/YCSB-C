@@ -17,6 +17,7 @@ if [ $# -lt 1 ]; then
 	exit 0
 fi
 
+
 case $1 in
 	'rocksdb')
 		case $2 in
@@ -37,10 +38,10 @@ case $1 in
 		case $2 in
 			'load')
 			    rmdb
-				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -load true -dboption 1
+				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -load true
 				;;
 			'run')
-				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -run true -dboption 1
+				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -run true
 				;;
 			*)
 				echo 'Error INPUT'
@@ -55,7 +56,7 @@ case $1 in
 				./ycsbc -db titandb -dbpath $dbpath -threads 1 -P $workload -load true -dboption 1
 				;;
 			'run')
-				./ycsbc -db titandb -dbpath $dbpath -threads 1 -P $workload -run true -dboption 1
+				./ycsbc -db titandb -dbpath $dbpath -threads 2 -P $workload -run true -dboption 1
 				;;
 			*)
 				echo 'Error INPUT'

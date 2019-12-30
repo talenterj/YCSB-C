@@ -1,4 +1,4 @@
-# Increase the number of max open files in Linux
+# !!! Increase the number of max open files in Linux
 or, RocksDB and Titan will fail running
 
 ```
