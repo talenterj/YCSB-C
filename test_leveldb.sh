@@ -11,6 +11,7 @@ rmdb() {
 	fi
 }
 
+
 if [ $# -lt 1 ]; then
 	echo 'Usage : ./xxxx.sh [rocksdb|leveldb|titan] [load|run]'
 	exit 0
@@ -20,11 +21,11 @@ case $1 in
 	'rocksdb')
 		case $2 in
 			'load')
-			    rmdb
-				./ycsbc -db rocksdb -dbpath $dbpath -threads 1 -P $workload -load true -dboption 1
+			    #rmdb
+				./ycsbc -db rocksdb -dbpath $dbpath -threads 1 -P $workload -load true
 				;;
 			'run')
-				./ycsbc -db rocksdb -dbpath $dbpath -threads 1 -P $workload -run true -dboption 1
+				./ycsbc -db rocksdb -dbpath $dbpath -threads 2 -P $workload -run true
 				;;
 			*)
 				echo 'Error INPUT'

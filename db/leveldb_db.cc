@@ -9,6 +9,8 @@
 #include "lib/coding.h"
 #include <cstdio>
 #include <cstdlib>
+//#include <time.h>
+#include <string>
 
 using namespace std;
 
@@ -30,7 +32,7 @@ namespace ycsbc {
 
     LevelDB::LevelDB(const char *dbfilename, utils::Properties &props) :noResult(0){
 
-//init hdr
+      //init hdr
       //cerr << "DEBUG- init histogram &=" << &hdr_ << endl;
       int r = hdr_init(
         1,  // Minimum value
@@ -60,17 +62,29 @@ namespace ycsbc {
       }
       //cout << "hdr_ init success, &hdr_=" << &hdr_ << endl;
 
+	  //time_t curr_t = time(0);
+	  //char tmp[32];
+	  //strftime(tmp,
+	  //              sizeof(tmp),
+	  //  			"%Y%m%d%H%M%S",
+	  //  			localtime(&curr_t)); //xp: get the time
+	  //std::string t_str = tmp;
+	  //std::string f_name_lat_perc = "./hdr/cuda-lat-perc-" + t_str + ".output";
+	  //std::string f_name_lat_hiccup = "./hdr/cuda-lat-hiccup-" + t_str + ".output";
+	  //
+	  //strcpy(tmp, f_name_lat_perc.c_str());
       f_hdr_output_= std::fopen("./hdr/cuda-lat-perc.output", "w+");
       if(!f_hdr_output_) {
         std::perror("hdr output file opening failed");
         exit(0);
       }
+	  //strcpy(tmp, f_name_lat_hiccup.c_str());
       f_hdr_hiccup_output_ = std::fopen("./hdr/cuda-lat-hiccup.output", "w+");
       if(!f_hdr_hiccup_output_) {
         std::perror("hdr hiccup output file opening failed");
         exit(0);
       }
-      fprintf(f_hdr_hiccup_output_, "#mean        95th     99th     99.99th\n");
+      fprintf(f_hdr_hiccup_output_, "#mean       95th    99th    99.99th   IOPS\n");
 
 
         
@@ -191,7 +205,7 @@ namespace ycsbc {
         }
         if(!s.ok()){
             //cerr<<"insert ERROR! error code: " << s.code() << endl;
-            cerr<<"insert ERROR!" << endl;
+            cerr<<"CUDA PUT() ERROR!" << endl;
             exit(0);
         }
         

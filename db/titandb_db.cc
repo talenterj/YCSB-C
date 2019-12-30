@@ -62,18 +62,32 @@ namespace ycsbc {
       }
       //cout << "hdr_ init success, &hdr_=" << &hdr_ << endl;
 
+//      time_t curr_t = time(0);
+//      char tmp[32];
+//      std::strftime(tmp,
+//                    sizeof(tmp),
+//                    "%Y%m%d%H%M%S",
+//                    localtime(&curr_t)); //xp: get the time
+//	  std::string t_str = tmp;
+//      std::string f_name_lat_perc = "./hdr/titan-lat-perc-" + t_str + ".output";
+//      std::string f_name_lat_hiccup = "./hdr/titan-lat-hiccup-" + t_str + ".output";
+//
+//	  strcpy(tmp, f_name_lat_perc.c_str());
+	  //cerr << "perc file name: " << tmp << endl;
       f_hdr_output_= std::fopen("./hdr/titan-lat-perc.output", "w+");
       if(!f_hdr_output_) {
         std::perror("hdr output file opening failed");
         exit(0);
-      }
+      }   
+	  //strcpy(tmp, f_name_lat_hiccup.c_str());
+	  //cerr << "hiccup file name: " << tmp << endl;
       f_hdr_hiccup_output_ = std::fopen("./hdr/titan-lat-hiccup.output", "w+");
       if(!f_hdr_hiccup_output_) {
         std::perror("hdr hiccup output file opening failed");
         exit(0);
-      }
-      fprintf(f_hdr_hiccup_output_, "#mean        95th     99th     99.99th\n");
-    
+      }   
+      fprintf(f_hdr_hiccup_output_, "#mean       95th    99th    99.99th   IOPS\n");
+
         //set option
         rocksdb::titandb::TitanOptions options;
         SetOptions(&options, props);
@@ -92,8 +106,18 @@ namespace ycsbc {
         options->create_if_missing = true;
         options->compression = rocksdb::kNoCompression;
         options->enable_pipelined_write = true;
-		options->write_buffer_size = 16 * 1024 * 1024;
-		options->target_file_size_base = 16 * 1024 * 1024;
+        // a column family's max memtable size
+        //  default 64MB
+        options->write_buffer_size = 512 * 1024 * 1024;
+        // sst file size
+        options->target_file_size_base = 16 * 1024 * 1024;
+        // tune a large number, or loading 0.1 billion KVs
+        //  will failed with IOError with around 24 million KVs.
+        options->max_open_files = 10240;
+        // max # of cocurrent jobs (compact + flushes)
+        //  default is 2.
+        // our Intel E5-1620 v4 has 8 logic cores
+        options->max_background_jobs = 8;
 
 
 		// save with LevelDB
@@ -157,7 +181,7 @@ namespace ycsbc {
             //cerr<<"read not found:"<<noResult<<endl;
             return DB::kOK;
         }else{
-			cerr<<"insert ERROR! error code: " << s.code() << endl;
+			cerr<<"Titan GET() ERROR! error code: " << s.code() << endl;
             exit(0);
         }
     }
@@ -201,7 +225,7 @@ namespace ycsbc {
         }
 
         if(!s.ok()){
-            cerr<<"insert error\n"<<endl;
+			cerr<<"Titan PUT() ERROR! error code: "<< s.code() << endl;
             exit(0);
         }
        
@@ -266,14 +290,19 @@ namespace ycsbc {
     }
 
     TitanDB::~TitanDB() {
-        printf("wait delete db\n");
+        printf("wait for close and delete Titan\n");
         free(hdr_);
         free(hdr_last_1s_);
         free(hdr_get_);
         free(hdr_put_);
         free(hdr_update_);
-        delete db_;
-        printf("delete\n");
+      rocksdb::Status s;
+      s = db_->Close();
+      if(!s.ok()) {
+        printf("Titan Close() failed!\n");
+      }   
+      delete db_;
+      printf("~TitanDB() success, terminated.\n");
     }
 
     void TitanDB::SerializeValues(std::vector<KVPair> &kvs, std::string &value) {

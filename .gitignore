@@ -1,6 +1,8 @@
 
 # Created by https://www.gitignore.io/api/c,vim,c++,tags,latex,linux,macos,cmake,emacs,python,dropbox,windows,notepadpp,clion+all,powershell,sublimetext,microsoftoffice,visualstudiocode
 
+*.sar
+
 # this lib.a is too large
 static/librocksdb.a
 
@@ -363,10 +365,8 @@ fabric.properties
 
 ### CMake ###
 CMakeCache.txt
-CMakeFiles
 CMakeScripts
 Testing
-Makefile
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json

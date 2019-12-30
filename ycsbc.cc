@@ -158,7 +158,8 @@ int main( const int argc, const char *argv[]) {
     db->PrintStats();
     printf("-------------------------------------------\n");
   }
-  if ( wait_for_balance ) {
+  //if ( wait_for_balance ) {
+  if ( 0) {
     uint64_t sleep_time = 0;
     while(!db->HaveBalancedDistribution()){
       sleep(10);

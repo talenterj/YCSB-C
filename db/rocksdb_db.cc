@@ -60,18 +60,30 @@ namespace ycsbc {
     }
     //cout << "hdr_ init success, &hdr_=" << &hdr_ << endl;
 
+    //time_t curr_t = time(0);
+    //char tmp[64];
+    //std::strftime(tmp,
+    //              sizeof(tmp),
+    //              "%Y%m%d%H%M%S",
+    //              std::localtime(&curr_t)); //xp: get the time
+	//std::string t_str = tmp;
+    //std::string f_name_lat_perc = "./hdr/rocksdb-lat-perc-" + t_str + ".output";
+    //std::string f_name_lat_hiccup = "./hdr/rocksdb-lat-hiccup-" + t_str + ".output";
+    //
+	//strcpy(tmp, f_name_lat_perc.c_str());
     f_hdr_output_= std::fopen("./hdr/rocksdb-lat-perc.output", "w+");
     if(!f_hdr_output_) {
       std::perror("hdr output file opening failed");
       exit(0);
-    }
+    }   
+	//strcpy(tmp, f_name_lat_hiccup.c_str());
     f_hdr_hiccup_output_ = std::fopen("./hdr/rocksdb-lat-hiccup.output", "w+");
     if(!f_hdr_hiccup_output_) {
       std::perror("hdr hiccup output file opening failed");
       exit(0);
-    }
-    fprintf(f_hdr_hiccup_output_, "#mean        95th     99th     99.99th   IOPS\n");
-   
+    }   
+    fprintf(f_hdr_hiccup_output_, "#mean       95th    99th    99.99th    IOPS\n");
+
     //set option
     rocksdb::Options options;
     SetOptions(&options, props);
@@ -89,10 +101,57 @@ namespace ycsbc {
         options->create_if_missing = true;
         options->compression = rocksdb::kNoCompression;
         options->enable_pipelined_write = true;
-		options->write_buffer_size = 16 * 1024 * 1024;
-		options->target_file_size_base = 16 * 1024 * 1024;
 
+        // a column family's max memtable size
+        //  default 64MB
+        options->write_buffer_size = 512 * 1024 * 1024;
+        // sst file size
+        options->target_file_size_base = 16 * 1024 * 1024;
+        // tune a large number, or loading 0.1 billion KVs
+        //  will failed with IOError.
+        options->max_open_files = 4096;
+        // max # of cocurrent jobs (compact + flushes)
+        //  default is 2.
+        //  our Intel E5-1620 v4 has 8 logic cores
+        options->max_background_jobs = 4;
+        // The maximum number of write buffers that are built up in memory.
+        // The default and the minimum number is 2, so that when 1 write buffer
+        // is being flushed to storage, new writes can continue to the other
+        // write buffer.
+        // If max_write_buffer_number > 3, writing will be slowed down to
+        // options.delayed_write_rate if we are writing to the last write buffer
+        // allowed.
+        //
+        // Default: 2
+        options->max_write_buffer_number = 3;
+        // Control maximum total data size for a level.
+        // max_bytes_for_level_base is the max total for level-1.
+        // Maximum number of bytes for level L can be calculated as
+        // (max_bytes_for_level_base) * (max_bytes_for_level_multiplier ^ (L-1))
+        // For example, if max_bytes_for_level_base is 200MB, and if
+        // max_bytes_for_level_multiplier is 10, total data size for level-1
+        // will be 200MB, total file size for level-2 will be 2GB,
+        // and total file size for level-3 will be 20GB.
+        //
+        // Default: 256MB.
+        options->max_bytes_for_level_base = 512*1024*1024; // 512MB
+        // Number of files to trigger level-0 compaction. A value <0 means that
+        // level-0 compaction will not be triggered by number of files at all.
+        //
+        // Default: 4
+        //options->level0_file_num_compaction_trigger = 8;
+        // Soft limit on number of level-0 files. We start slowing down writes at this
+        // point. A value <0 means that no writing slow down will be triggered by
+        // number of files in level-0.
+        //
+        // Default: 20
+        //options->level0_slowdown_writes_trigger = 17;
+        // Maximum number of level-0 files.  We stop writes at this point.
+        //
+        // Default: 36
+        //options->level0_stop_writes_trigger = 24;
 
+		
 		// save with LevelDB
 		//options->level0_file_num_compaction_trigger = 4;
 		//options->level0_slowdown_writes_trigger = 8;     
@@ -154,7 +213,11 @@ namespace ycsbc {
             //cerr<<"read not found:"<<noResult<<endl;
             return DB::kOK;
         }else{
-            cerr<<"read error"<<endl;
+			cerr<<"RocksDB GET() ERROR! error code: "<< s.code() << endl;
+			//cerr<<"RocksDB.stats: "<< s.code() << endl;
+            //string stats;
+            //db_->GetProperty("rocksdb.stats",&stats);
+            //cout<<stats<<endl;
             exit(0);
         }
     }
@@ -197,7 +260,7 @@ namespace ycsbc {
           hdr_record_value(hdr_put_, tx_xtime);
         }
         if(!s.ok()){
-            cerr<<"insert ERROR! error code: "<< s.code() << endl;
+            cerr<<"RocksDB PUT() ERROR! error code: "<< s.code() << endl;
             exit(0);
         }
        
@@ -223,7 +286,7 @@ namespace ycsbc {
         rocksdb::Status s;
         s = db_->Delete(rocksdb::WriteOptions(),key);
         if(!s.ok()){
-            cerr<<"Delete error\n"<<endl;
+		    cerr<<"RocksDB DEL() ERROR! error code: "<< s.code() << endl;
             exit(0);
         }
         return DB::kOK;
@@ -261,14 +324,19 @@ namespace ycsbc {
     }
 
     RocksDB::~RocksDB() {
-        printf("wait delete db\n");
+      printf("wait for closing and deleting RocksDB\n");
       free(hdr_);
       free(hdr_last_1s_);
       free(hdr_get_);
       free(hdr_put_);
       free(hdr_update_);
-        delete db_;
-        printf("delete\n");
+      rocksdb::Status s;
+	  s = db_->Close();
+	  if(!s.ok()) {
+	    printf("RocksDB Close() failed!\n");
+	  }
+      delete db_;
+      printf("~RocksDB() success, terminated.\n");
     }
 
     void RocksDB::SerializeValues(std::vector<KVPair> &kvs, std::string &value) {

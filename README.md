@@ -1,3 +1,15 @@
+# Increase the number of max open files in Linux
+or, RocksDB and Titan will fail running
+
+```
+for system wide, sudo vim /etc/sysctl.conf, add followings
+# fs.file-max = 6553560
+
+for a process, sudo vim /etc/security/limits.conf, add followings
+* soft nofile 65535   
+* hard nofile 65535  
+```
+
 # YCSB-C
 
 Yahoo! Cloud Serving Benchmark in C++, a C++ version of YCSB (https://github.com/brianfrankcooper/YCSB/wiki)
