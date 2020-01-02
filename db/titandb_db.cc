@@ -105,7 +105,7 @@ namespace ycsbc {
         //// 默认的Rocksdb配置
         options->create_if_missing = true;
         options->compression = rocksdb::kNoCompression;
-        options->enable_pipelined_write 
+        options->enable_pipelined_write = true;
         // a column family's max memtable size
         //  default 64MB
         options->write_buffer_size = 512 * 1024 * 1024;
