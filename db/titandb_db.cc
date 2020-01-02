@@ -105,20 +105,56 @@ namespace ycsbc {
         //// 默认的Rocksdb配置
         options->create_if_missing = true;
         options->compression = rocksdb::kNoCompression;
-        options->enable_pipelined_write = true;
+        options->enable_pipelined_write 
         // a column family's max memtable size
         //  default 64MB
         options->write_buffer_size = 512 * 1024 * 1024;
         // sst file size
         options->target_file_size_base = 16 * 1024 * 1024;
         // tune a large number, or loading 0.1 billion KVs
-        //  will failed with IOError with around 24 million KVs.
-        options->max_open_files = 10240;
+        //  will failed with IOError.
+        options->max_open_files = 4096;
         // max # of cocurrent jobs (compact + flushes)
         //  default is 2.
-        // our Intel E5-1620 v4 has 8 logic cores
-        options->max_background_jobs = 8;
-
+        //  our Intel E5-1620 v4 has 8 logic cores
+        options->max_background_jobs = 4;
+        // The maximum number of write buffers that are built up in memory.
+        // The default and the minimum number is 2, so that when 1 write buffer
+        // is being flushed to storage, new writes can continue to the other
+        // write buffer.
+        // If max_write_buffer_number > 3, writing will be slowed down to
+        // options.delayed_write_rate if we are writing to the last write buffer
+        // allowed.
+        //
+        // Default: 2
+        options->max_write_buffer_number = 6;
+        // Control maximum total data size for a level.
+        // max_bytes_for_level_base is the max total for level-1.
+        // Maximum number of bytes for level L can be calculated as
+        // (max_bytes_for_level_base) * (max_bytes_for_level_multiplier ^ (L-1))
+        // For example, if max_bytes_for_level_base is 200MB, and if
+        // max_bytes_for_level_multiplier is 10, total data size for level-1
+        // will be 200MB, total file size for level-2 will be 2GB,
+        // and total file size for level-3 will be 20GB.
+        //
+        // Default: 256MB.
+        options->max_bytes_for_level_base = 512*1024*1024; // 512MB
+        // Number of files to trigger level-0 compaction. A value <0 means that
+        // level-0 compaction will not be triggered by number of files at all.
+        //
+        // Default: 4
+        options->level0_file_num_compaction_trigger = 8;
+        // Soft limit on number of level-0 files. We start slowing down writes at this
+        // point. A value <0 means that no writing slow down will be triggered by
+        // number of files in level-0.
+        //
+        // Default: 20
+        options->level0_slowdown_writes_trigger = 17;
+        // Maximum number of level-0 files.  We stop writes at this point.
+        //
+        // Default: 36
+        options->level0_stop_writes_trigger = 24;
+        
 
 		// save with LevelDB
 		//options->level0_file_num_compaction_trigger = 4;

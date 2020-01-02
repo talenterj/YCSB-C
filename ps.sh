@@ -1,14 +1,21 @@
 #!/bin/sh
 
-#use ps to monitor ycsbc cpu, mem, gpu, gpu mem and others'A
-# ' 
-#Usage : ./xxxx.sh [process_name]'
-#  example: ./ps.sh compiz | tee stats.output'
+# NOTICE: please ensure that you have vmtouch (https://github.com/hoytech/vmtouch)
 
+#use ps to monitor ycsbc cpu, mem, gpu, gpu mem and others
+# ' 
+#Usage : ./xxxx.sh [process_name] [output_file_name]'
+#  example: ./ps.sh compiz stats.output'
+
+
+
+# update the path of your KV dbs
+dbpath=~/OPTANE/ycsbc
 
 pname=$1
 # pidof returns nothing if failed
 pid=$(pidof $pname)
+logtmp=tmp.monitor
 
 if [ "$pid" = "" ] 
 then
@@ -18,12 +25,14 @@ else
 fi
 
 
-monitor() {
+monitoring() {
 
   #rss: size of used physical ram
   #vms: size of allocated logical ram
-  echo "#time cpu rss Gutil Gmem Glat GPWR Gtmp pgrp pid   uid  usr  vms args"
-  echo "#s    %   KB  %     MB   us   Watt C                         KB" 
+  echo "#time cpu rss Gutil Gmem Glat GPWR Gtmp pgrp pid  vms files \$pages"| tee $logtmp
+  echo "#s    %   KB  %     MB   us   Watt C              KB" | tee -a $logtmp
+
+  pargs=$(ps --pid $pid -o 'args' -f | more | tail -n 1)
 
   while [ 1 ]; do
     # check this process is alive
@@ -38,39 +47,62 @@ monitor() {
     then
       # RUNNING
       pstats1=$(ps --pid $pid -o 'etimes,pcpu,rsz' | tail -n 1)
-      pstats2=$(ps --pid $pid -o 'pgrp,pid,uid,user,vsz,args' -f | more | tail -n 1)
+      #pstats2=$(ps --pid $pid -o 'pgrp,pid,uid,user,vsz' | tail -n 1)
+      pstats2=$(ps --pid $pid -o 'pgrp,pid,vsz' | tail -n 1)
+
+	  #pcgroup=$(cat /proc/$pid/cgroup |)
   
       #echo "Gutil/% Gtmp/C Gwatt/W Gmem/MB Glat"
       gpu=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,encoder.stats.averageLatency,power.draw,temperature.gpu --format=csv,noheader | tr -d -c '0-9 .')
-  
-      echo $pstats1 $gpu $pstats2 
-  #    echo "ret   : $ret"
-  #    echo "pname : $pname"
-  #    echo "pid   : $pid"
-  #    echo "pido  : $pido"
-  #    echo "pstats: $pstats"
-  #    echo "pstats2: $pstats2"
+
+      #echo "files  cachedPage"
+	  pvm=$(vmtouch -f flying | tail -n 4 | awk -F ':' '{print $2}' | xargs | awk '{print $1,$4}')
+
+      echo "$pstats1 $gpu $pstats2 $pvm" | tee -a $logtmp
     else
       # NOT RUNNING
       break
     fi
     sleep 1
   done
-  echo "## monitor terminated"
+  echo "## monitor terminated" | tee -a $logtmp
+}
+
+
+refineLog () {
+  if [ "$log" = "stats.output" ]
+  then
+    sed -e '/# wait for process/d' $logtmp > stats.output
+	echo "## cmd line: $pargs" | tee -a stats.output
+	echo "logs output file: stats.output"
+  else
+    sed -e '/# wait for process/d' $logtmp > $log
+	echo "## cmd line: $pargs" | tee -a $log
+	echo "logs output file: $log"
+  fi
+  rm $logtmp
+}
+
+
+trap 'onCtrlC' INT
+onCtrlC () {
+  refineLog
+  exit
 }
 
 
 if [ $# -lt 1 ]; then
     echo 'use ps to monitor ycsbc cpu, mem, gpu, gpu mem and others'A
 	echo ' ' 
-    echo 'Usage : ./xxxx.sh [process_name]'
-    echo '  example: ./ps.sh compiz | tee stats.output'
+    echo 'Usage : ./xxxx.sh [process_name] xxx.stats'
+    echo '  example: ./ps.sh compiz ps.output'
     exit 0
 fi
 
 
 patient=0
-while [ $patient -lt 10 ]; do
+max_patient=30
+while [ $patient -lt $max_patient ]; do
   pid=$(pidof $pname)
   if [ "$pid" = "" ]
   then # not start running
@@ -84,10 +116,21 @@ while [ $patient -lt 10 ]; do
 done
 
 
-if [ $patient -eq 10 ]
+if [ $patient -eq $max_patient ]
 then
-  echo "# after 10 seconds without sensing your program $1, exit."
+  echo "# after $max_patient seconds without sensing your program $1, exit."
 else
   # activate monitoring
-  monitor
+  if [ "$2" = "" ]
+  then
+    echo "# seems invalid stats output file name, use default stats.output"
+	log="stats.output"
+  else
+    log=$2
+  fi
+
+  monitoring
+
+  refineLog
+
 fi

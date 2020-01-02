@@ -123,7 +123,7 @@ namespace ycsbc {
         // allowed.
         //
         // Default: 2
-        options->max_write_buffer_number = 3;
+        options->max_write_buffer_number = 6;
         // Control maximum total data size for a level.
         // max_bytes_for_level_base is the max total for level-1.
         // Maximum number of bytes for level L can be calculated as
@@ -139,17 +139,24 @@ namespace ycsbc {
         // level-0 compaction will not be triggered by number of files at all.
         //
         // Default: 4
-        //options->level0_file_num_compaction_trigger = 8;
+		// level0_file_num_compaction_trigger -- Once level 0 reaches this 
+		// number of files, L0->L1 compaction is triggered. 
+		// We can therefore estimate level 0 size in stable state as 
+		// write_buffer_size * min_write_buffer_number_to_merge *
+		// level0_file_num_compaction_trigger
+        options->level0_file_num_compaction_trigger = 8;
+        //options->level0_file_num_compaction_trigger = 64; // 1024MB
         // Soft limit on number of level-0 files. We start slowing down writes at this
         // point. A value <0 means that no writing slow down will be triggered by
         // number of files in level-0.
         //
         // Default: 20
-        //options->level0_slowdown_writes_trigger = 17;
+        options->level0_slowdown_writes_trigger = 17;
         // Maximum number of level-0 files.  We stop writes at this point.
         //
         // Default: 36
-        //options->level0_stop_writes_trigger = 24;
+        options->level0_stop_writes_trigger = 24;
+
 
 		
 		// save with LevelDB
