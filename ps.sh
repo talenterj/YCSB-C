@@ -10,7 +10,7 @@
 
 
 # update the path of your KV dbs
-dbpath=~/OPTANE/ycsbc
+dbpath=~/OPTANE/ycsb
 
 pname=$1
 # pidof returns nothing if failed
@@ -29,8 +29,8 @@ monitoring() {
 
   #rss: size of used physical ram
   #vms: size of allocated logical ram
-  echo "#time cpu rss Gutil Gmem Glat GPWR Gtmp pgrp pid  vms files \$pages"| tee $logtmp
-  echo "#s    %   KB  %     MB   us   Watt C              KB" | tee -a $logtmp
+  echo "#time cpu rss Gutil Gmem Glat GPWR Gtmp pgrp pid  vms files \$pages RD/s WR/s Rsize Wsize"| tee $logtmp
+  echo "#s    %   KB  %     MB   us   Watt C              KB                MB   MB   MB    MB" | tee -a $logtmp
 
   pargs=$(ps --pid $pid -o 'args' -f | more | tail -n 1)
 
@@ -56,9 +56,13 @@ monitoring() {
       gpu=$(nvidia-smi --query-gpu=utilization.gpu,memory.used,encoder.stats.averageLatency,power.draw,temperature.gpu --format=csv,noheader | tr -d -c '0-9 .')
 
       #echo "files  cachedPage"
-	  pvm=$(vmtouch -f flying | tail -n 4 | awk -F ':' '{print $2}' | xargs | awk '{print $1,$4}')
+	  pvm=$(vmtouch -f $dbpath | tail -n 4 | awk -F ':' '{print $2}' | xargs | awk '{print $1,$4}')
 
-      echo "$pstats1 $gpu $pstats2 $pvm" | tee -a $logtmp
+	  #echo "MB_read/s    MB_wrtn/s    MB_read    MB_wrtn"
+	  #use iostat, for nvme device
+	  piostat=$(iostat -m | grep nvme | awk '{$1=$2=""; print $0}')
+
+      echo "$pstats1 $gpu $pstats2 $pvm $piostat" | tee -a $logtmp
     else
       # NOT RUNNING
       break
@@ -101,7 +105,7 @@ fi
 
 
 patient=0
-max_patient=30
+max_patient=330
 while [ $patient -lt $max_patient ]; do
   pid=$(pidof $pname)
   if [ "$pid" = "" ]

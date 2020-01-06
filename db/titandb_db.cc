@@ -108,9 +108,9 @@ namespace ycsbc {
         options->enable_pipelined_write = true;
         // a column family's max memtable size
         //  default 64MB
-        options->write_buffer_size = 512 * 1024 * 1024;
+        options->write_buffer_size = 4 * 1024 * 1024;
         // sst file size
-        options->target_file_size_base = 16 * 1024 * 1024;
+        options->target_file_size_base = 4 * 1024 * 1024;
         // tune a large number, or loading 0.1 billion KVs
         //  will failed with IOError.
         options->max_open_files = 4096;
@@ -138,22 +138,22 @@ namespace ycsbc {
         // and total file size for level-3 will be 20GB.
         //
         // Default: 256MB.
-        options->max_bytes_for_level_base = 512*1024*1024; // 512MB
+        options->max_bytes_for_level_base = 10*1024*1024; //xp: LevelDB level 1 is 10MB
         // Number of files to trigger level-0 compaction. A value <0 means that
         // level-0 compaction will not be triggered by number of files at all.
         //
         // Default: 4
-        options->level0_file_num_compaction_trigger = 8;
+        options->level0_file_num_compaction_trigger = 4;
         // Soft limit on number of level-0 files. We start slowing down writes at this
         // point. A value <0 means that no writing slow down will be triggered by
         // number of files in level-0.
         //
         // Default: 20
-        options->level0_slowdown_writes_trigger = 17;
+        options->level0_slowdown_writes_trigger = 20;
         // Maximum number of level-0 files.  We stop writes at this point.
         //
         // Default: 36
-        options->level0_stop_writes_trigger = 24;
+        options->level0_stop_writes_trigger = 36;
         
 
 		// save with LevelDB

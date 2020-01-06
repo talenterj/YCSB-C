@@ -56,6 +56,7 @@ namespace ycsbc {
 
         bool HaveBalancedDistribution();
 
+
         uint64_t get_now_micros(){
             struct timeval tv;
             gettimeofday(&tv, NULL);

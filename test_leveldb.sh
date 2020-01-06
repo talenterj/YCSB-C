@@ -18,6 +18,19 @@ if [ $# -lt 1 ]; then
 fi
 
 
+chill_optane() {
+  echo "# sleep 180s to avoid possible OPTANE in-drive cache effects."
+  echo "# you could avoid this by commenting there in test_leveldb.sh."
+  
+  patient=180
+  while [ $patient -gt 0 ]; do
+    echo "# $patient seconds left to start $1" 
+    patient=$(( $patient - 1 ))
+    sleep 1
+  done
+}
+
+
 case $1 in
 	'rocksdb')
 		case $2 in
@@ -26,6 +39,7 @@ case $1 in
 				./ycsbc -db rocksdb -dbpath $dbpath -threads 1 -P $workload -load true
 				;;
 			'run')
+			    chill_optane
 				./ycsbc -db rocksdb -dbpath $dbpath -threads 4 -P $workload -run true
 				;;
 			*)
@@ -41,6 +55,7 @@ case $1 in
 				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -load true
 				;;
 			'run')
+			    chill_optane
 				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -run true
 				;;
 			*)
@@ -56,7 +71,8 @@ case $1 in
 				./ycsbc -db titandb -dbpath $dbpath -threads 1 -P $workload -load true
 				;;
 			'run')
-				./ycsbc -db titandb -dbpath $dbpath -threads 4 -P $workload -run true
+			    chill_optane
+				./ycsbc -db titandb -dbpath $dbpath -threads 1 -P $workload -run true
 				;;
 			*)
 				echo 'Error INPUT'

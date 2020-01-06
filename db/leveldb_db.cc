@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "leveldb_db.h"
+#include "leveldb/filter_policy.h"
 #include "lib/coding.h"
 #include <cstdio>
 #include <cstdlib>
@@ -111,8 +112,10 @@ namespace ycsbc {
         //// 默认的Leveldb配置
         options->create_if_missing = true;
         options->compression = leveldb::kNoCompression;
-		options->write_buffer_size = 15 * 1024 * 1024;
-		options->max_file_size = 15 * 1024 * 1024;
+		//xp: keep write_buffer_size == max_file_size
+		options->write_buffer_size = 4 * 1024 * 1024;
+		options->max_file_size = 4 * 1024 * 1024;
+		//options->filter_policy = LevelDB::NewBloomFilterPolicy(10);
 
         ////
 
