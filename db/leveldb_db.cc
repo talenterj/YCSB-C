@@ -74,19 +74,18 @@ namespace ycsbc {
 	  //std::string f_name_lat_hiccup = "./hdr/cuda-lat-hiccup-" + t_str + ".output";
 	  //
 	  //strcpy(tmp, f_name_lat_perc.c_str());
-      f_hdr_output_= std::fopen("./hdr/cuda-lat-perc.output", "w+");
+      f_hdr_output_= std::fopen("./hdr/cuda-lat.hgrm", "w+");
       if(!f_hdr_output_) {
         std::perror("hdr output file opening failed");
         exit(0);
       }
 	  //strcpy(tmp, f_name_lat_hiccup.c_str());
-      f_hdr_hiccup_output_ = std::fopen("./hdr/cuda-lat-hiccup.output", "w+");
+      f_hdr_hiccup_output_ = std::fopen("./hdr/cuda-lat.hiccup", "w+");
       if(!f_hdr_hiccup_output_) {
         std::perror("hdr hiccup output file opening failed");
         exit(0);
       }
       fprintf(f_hdr_hiccup_output_, "#mean       95th    99th    99.99th   IOPS\n");
-
 
         
         //set option
@@ -114,8 +113,9 @@ namespace ycsbc {
         options->compression = leveldb::kNoCompression;
 		//xp: keep write_buffer_size == max_file_size
 		options->write_buffer_size = 4 * 1024 * 1024;
-		options->max_file_size = 4 * 1024 * 1024;
-		//options->filter_policy = LevelDB::NewBloomFilterPolicy(10);
+		//options->max_file_size = 4 * 1024 * 1024 + 100* 1024; //xp: leveldb-1.22
+		options->max_file_size = 4 * 1024 * 1024; //xp: cuda
+		options->filter_policy = leveldb::NewBloomFilterPolicy(10);
 
         ////
 
@@ -243,17 +243,39 @@ namespace ycsbc {
     void LevelDB::PrintStats() {
       cout<<"read not found:"<<noResult<<endl;
       string stats;
-      db_->GetProperty("leveldb.stats",&stats);
-      cout<<stats<<endl;
+      int rt = db_->GetProperty("leveldb.stats",&stats);
+	  if (false == rt) {
+	    cout << "LevelDB GetProperty() failed." << endl;
+	  }
+	  else {
+	    //cout << "LevelDB GetProperty() success." << endl;
+	    cout << stats << endl;
+	  }
+
       cout << "-------------------------------" << endl;
-      cout << "SUMMARY 95th latency (us) of this run with HDR measurement" << endl;
-      cout << "ALL      GET      PUT      UPD" << endl;
-      fprintf(stdout, "%-8ld %-8ld %-8ld %-8ld\n",
+      cout << "SUMMARY latency (us) of this run with HDR measurement" << endl;
+	  cout << "         ALL        GET        PUT        UPD" << endl;
+      fprintf(stdout, "mean     %-10lf %-10lf %-10lf %-10lf\n",
+                hdr_mean(hdr_),
+                hdr_mean(hdr_get_),
+                hdr_mean(hdr_put_),
+                hdr_mean(hdr_update_));
+      fprintf(stdout, "95th     %-10ld %-10ld %-10ld %-10ld\n",
                 hdr_value_at_percentile(hdr_, 95),
                 hdr_value_at_percentile(hdr_get_, 95),
                 hdr_value_at_percentile(hdr_put_, 95),
                 hdr_value_at_percentile(hdr_update_, 95));
- 
+      fprintf(stdout, "99th     %-10ld %-10ld %-10ld %-10ld\n",
+                hdr_value_at_percentile(hdr_, 99),
+                hdr_value_at_percentile(hdr_get_, 99),
+                hdr_value_at_percentile(hdr_put_, 99),
+                hdr_value_at_percentile(hdr_update_, 99));
+      fprintf(stdout, "99.99th  %-10ld %-10ld %-10ld %-10ld\n",
+                hdr_value_at_percentile(hdr_, 99.99),
+                hdr_value_at_percentile(hdr_get_, 99.99),
+                hdr_value_at_percentile(hdr_put_, 99.99),
+                hdr_value_at_percentile(hdr_update_, 99.99));
+
       int ret = hdr_percentiles_print(
               hdr_,
               f_hdr_output_,  // File to write to

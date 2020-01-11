@@ -5,6 +5,9 @@
 
 
 #include "rocksdb_db.h"
+#include "rocksdb/status.h"
+#include "rocksdb/filter_policy.h"
+#include "rocksdb/table.h"
 #include "lib/coding.h"
 #include <hdr/hdr_histogram.h>
 #include <cstdio>
@@ -49,12 +52,12 @@ namespace ycsbc {
        (NULL == hdr_put_) ||
        (NULL == hdr_update_) ||
        (23552 < hdr_->counts_len)) {
-      cerr << "DEBUG- init hdrhistogram failed." << endl;
-      cerr << "DEBUG- r=" << r << endl;
-      cerr << "DEBUG- histogram=" << &hdr_ << endl;
-      cerr << "DEBUG- counts_len=" << hdr_->counts_len << endl;
-      cerr << "DEBUG- counts:" << hdr_->counts << ", total_c:" << hdr_->total_count << endl;
-      cerr << "DEBUG- lowest:" << hdr_->lowest_trackable_value << ", max:" <<hdr_->highest_trackable_value << endl;
+      cout << "DEBUG- init hdrhistogram failed." << endl;
+      cout << "DEBUG- r=" << r << endl;
+      cout << "DEBUG- histogram=" << &hdr_ << endl;
+      cout << "DEBUG- counts_len=" << hdr_->counts_len << endl;
+      cout << "DEBUG- counts:" << hdr_->counts << ", total_c:" << hdr_->total_count << endl;
+      cout << "DEBUG- lowest:" << hdr_->lowest_trackable_value << ", max:" <<hdr_->highest_trackable_value << endl;
       free(hdr_);
       exit(0);
     }
@@ -71,13 +74,13 @@ namespace ycsbc {
     //std::string f_name_lat_hiccup = "./hdr/rocksdb-lat-hiccup-" + t_str + ".output";
     //
 	//strcpy(tmp, f_name_lat_perc.c_str());
-    f_hdr_output_= std::fopen("./hdr/rocksdb-lat-perc.output", "w+");
+    f_hdr_output_= std::fopen("./hdr/rocksdb-lat.hgrm", "w+");
     if(!f_hdr_output_) {
       std::perror("hdr output file opening failed");
       exit(0);
     }   
 	//strcpy(tmp, f_name_lat_hiccup.c_str());
-    f_hdr_hiccup_output_ = std::fopen("./hdr/rocksdb-lat-hiccup.output", "w+");
+    f_hdr_hiccup_output_ = std::fopen("./hdr/rocksdb-lat.hiccup", "w+");
     if(!f_hdr_hiccup_output_) {
       std::perror("hdr hiccup output file opening failed");
       exit(0);
@@ -90,7 +93,7 @@ namespace ycsbc {
      
     rocksdb::Status s = rocksdb::DB::Open(options,dbfilename,&db_);
     if(!s.ok()){
-        cerr<<"Can't open rocksdb "<<dbfilename<<" "<<s.ToString()<<endl;
+        cout <<"Can't open rocksdb "<<dbfilename<<" "<<s.ToString()<<endl;
         exit(0);
     }
   }
@@ -101,6 +104,8 @@ namespace ycsbc {
         options->create_if_missing = true;
         options->compression = rocksdb::kNoCompression;
         options->enable_pipelined_write = true;
+		rocksdb::BlockBasedTableOptions table_options;
+        table_options.filter_policy.reset(rocksdb::NewBloomFilterPolicy(10));
 
         // a column family's max memtable size
         //  default 64MB
@@ -134,7 +139,7 @@ namespace ycsbc {
         // and total file size for level-3 will be 20GB.
         //
         // Default: 256MB.
-        options->max_bytes_for_level_base = 10*1024*1024; //xp: LevelDB level 1 is 10MB
+        options->max_bytes_for_level_base = 256*1024*1024; //xp: leveldb 'MaxBytesForLevel()' 
         // Number of files to trigger level-0 compaction. A value <0 means that
         // level-0 compaction will not be triggered by number of files at all.
         //
@@ -152,11 +157,11 @@ namespace ycsbc {
         // number of files in level-0.
         //
         // Default: 20
-        //options->level0_slowdown_writes_trigger = 17;
+        options->level0_slowdown_writes_trigger = 60;
         // Maximum number of level-0 files.  We stop writes at this point.
         //
         // Default: 36
-        //options->level0_stop_writes_trigger = 24;
+        options->level0_stop_writes_trigger = 64;
 
 
 		
@@ -200,7 +205,7 @@ namespace ycsbc {
         rocksdb::Status s = db_->Get(rocksdb::ReadOptions(),key,&value);
         uint64_t tx_xtime = get_now_micros() - tx_begin_time;
         if(tx_xtime > 3600000000) {
-          cerr << "too large tx_xtime" << endl;
+          cout << "too large tx_xtime" << endl;
         } else {
           hdr_record_value(hdr_, tx_xtime);
           hdr_record_value(hdr_last_1s_, tx_xtime);
@@ -220,8 +225,9 @@ namespace ycsbc {
             noResult++;
             //cerr<<"read not found:"<<noResult<<endl;
             return DB::kOK;
-        }else{
-			cerr<<"RocksDB GET() ERROR! error code: "<< s.code() << endl;
+        }
+		else{
+            cout <<"RocksDB GET() ERROR! error string: "<< s.ToString() << endl;
 			//cerr<<"RocksDB.stats: "<< s.code() << endl;
             //string stats;
             //db_->GetProperty("rocksdb.stats",&stats);
@@ -248,6 +254,7 @@ namespace ycsbc {
         return DB::kOK;
     }
 
+
     int RocksDB::Insert(const std::string &table, const std::string &key,
                         std::vector<KVPair> &values){
         rocksdb::Status s;
@@ -261,19 +268,21 @@ namespace ycsbc {
         s = db_->Put(rocksdb::WriteOptions(), key, value);
         uint64_t tx_xtime = get_now_micros() - tx_begin_time;
         if(tx_xtime > 3600000000) {
-          cerr << "too large tx_xtime" << endl;
+          cout << "too large tx_xtime" << endl;
         } else {
           hdr_record_value(hdr_, tx_xtime);
           hdr_record_value(hdr_last_1s_, tx_xtime);
           hdr_record_value(hdr_put_, tx_xtime);
         }
+
         if(!s.ok()){
-            cerr<<"RocksDB PUT() ERROR! error code: "<< s.code() << endl;
+            cout <<"RocksDB PUT() ERROR! error string: "<< s.ToString() << endl;
             exit(0);
         }
        
         return DB::kOK;
     }
+
 
     int RocksDB::Update(const std::string &table, const std::string &key, std::vector<KVPair> &values) {
         int s;
@@ -281,38 +290,66 @@ namespace ycsbc {
         s =  Insert(table,key,values);
         uint64_t tx_xtime = get_now_micros() - tx_begin_time;
         if(tx_xtime > 3600000000) {
-          cerr << "too large tx_xtime" << endl;
+          cout << "too large tx_xtime" << endl;
         } else {
           hdr_record_value(hdr_, tx_xtime);
           hdr_record_value(hdr_last_1s_, tx_xtime);
           hdr_record_value(hdr_update_, tx_xtime);
         }
+
+		if(0 != s) { //xp: not OK
+		  cout << "UPD() ERROR! error code: " << s << endl;
+		}
         return s;
     }
+
 
     int RocksDB::Delete(const std::string &table, const std::string &key) {
         rocksdb::Status s;
         s = db_->Delete(rocksdb::WriteOptions(),key);
         if(!s.ok()){
-		    cerr<<"RocksDB DEL() ERROR! error code: "<< s.code() << endl;
+            cout <<"RocksDB DEL() ERROR! error string: "<< s.ToString() << endl;
             exit(0);
         }
         return DB::kOK;
     }
 
+
     void RocksDB::PrintStats() {
-        cout<<"read not found:"<<noResult<<endl;
-        string stats;
-        db_->GetProperty("rocksdb.stats",&stats);
-        cout<<stats<<endl;
-        cout << "-------------------------------" << endl;
-      cout << "SUMMARY 95th latency (us) of this run with HDR measurement" << endl;
-      cout << "ALL      GET      PUT      UPD" << endl;
-      fprintf(stdout, "%-8ld %-8ld %-8ld %-8ld\n",
+      cout<<"read not found:"<<noResult<<endl;
+      string stats;
+      bool rt = db_->GetProperty("rocksdb.stats", &stats);
+	  if(rt == false) {
+	    cout << "RocksDB GetProperty() failed with return: " << rt << endl;
+	  }
+	  else {
+	    //cout << "RocksDB GetProperty() success with return: " << rt << endl;
+		cout << stats << endl;
+	  }
+
+      cout << "-------------------------------" << endl;
+      cout << "SUMMARY latency (us) of this run with HDR measurement" << endl;
+      cout << "         ALL        GET        PUT        UPD" << endl;
+      fprintf(stdout, "mean     %-10lf %-10lf %-10lf %-10lf\n",
+                hdr_mean(hdr_),
+                hdr_mean(hdr_get_),
+                hdr_mean(hdr_put_),
+                hdr_mean(hdr_update_));
+      fprintf(stdout, "95th     %-10ld %-10ld %-10ld %-10ld\n",
                 hdr_value_at_percentile(hdr_, 95),
                 hdr_value_at_percentile(hdr_get_, 95),
                 hdr_value_at_percentile(hdr_put_, 95),
                 hdr_value_at_percentile(hdr_update_, 95));
+      fprintf(stdout, "99th     %-10ld %-10ld %-10ld %-10ld\n",
+                hdr_value_at_percentile(hdr_, 99),
+                hdr_value_at_percentile(hdr_get_, 99),
+                hdr_value_at_percentile(hdr_put_, 99),
+                hdr_value_at_percentile(hdr_update_, 99));
+      fprintf(stdout, "99.99th  %-10ld %-10ld %-10ld %-10ld\n",
+                hdr_value_at_percentile(hdr_, 99.99),
+                hdr_value_at_percentile(hdr_get_, 99.99),
+                hdr_value_at_percentile(hdr_put_, 99.99),
+                hdr_value_at_percentile(hdr_update_, 99.99));
  
       int ret = hdr_percentiles_print(
               hdr_,
@@ -321,7 +358,7 @@ namespace ycsbc {
               1.0,  // Multiplier for results
               CLASSIC);  // Format CLASSIC/CSV supported.
       if(0 != ret) {
-        cerr << "hdr percentile output print file error!" <<endl;
+        cout << "hdr percentile output print file error!" <<endl;
       }
       cout << "-------------------------------" << endl;
     }

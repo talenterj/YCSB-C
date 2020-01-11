@@ -5,6 +5,7 @@ workload=${root_dir}/workloads/workloada.spec
 dbpath=~/OPTANE/ycsb
 
 rmdb() {
+    rm -fr compactInfo.output
 	if [ -n "$dbpath" ];then
 		echo 'We will delete all files in ' $dbpath
 		rm -rf $dbpath/*
@@ -19,10 +20,10 @@ fi
 
 
 chill_optane() {
-  echo "# sleep 180s to avoid possible OPTANE in-drive cache effects."
+  echo "# sleep 60s to avoid possible OPTANE in-drive cache effects."
   echo "# you could avoid this by commenting there in test_leveldb.sh."
   
-  patient=180
+  patient=60
   while [ $patient -gt 0 ]; do
     echo "# $patient seconds left to start $1" 
     patient=$(( $patient - 1 ))
@@ -72,7 +73,7 @@ case $1 in
 				;;
 			'run')
 			    chill_optane
-				./ycsbc -db titandb -dbpath $dbpath -threads 1 -P $workload -run true
+				./ycsbc -db titandb -dbpath $dbpath -threads 4 -P $workload -run true
 				;;
 			*)
 				echo 'Error INPUT'

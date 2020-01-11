@@ -74,14 +74,14 @@ namespace ycsbc {
 //
 //	  strcpy(tmp, f_name_lat_perc.c_str());
 	  //cerr << "perc file name: " << tmp << endl;
-      f_hdr_output_= std::fopen("./hdr/titan-lat-perc.output", "w+");
+      f_hdr_output_= std::fopen("./hdr/titan-lat.hgrm", "w+");
       if(!f_hdr_output_) {
         std::perror("hdr output file opening failed");
         exit(0);
       }   
 	  //strcpy(tmp, f_name_lat_hiccup.c_str());
 	  //cerr << "hiccup file name: " << tmp << endl;
-      f_hdr_hiccup_output_ = std::fopen("./hdr/titan-lat-hiccup.output", "w+");
+      f_hdr_hiccup_output_ = std::fopen("./hdr/titan-lat.hiccup", "w+");
       if(!f_hdr_hiccup_output_) {
         std::perror("hdr hiccup output file opening failed");
         exit(0);
@@ -138,22 +138,22 @@ namespace ycsbc {
         // and total file size for level-3 will be 20GB.
         //
         // Default: 256MB.
-        options->max_bytes_for_level_base = 10*1024*1024; //xp: LevelDB level 1 is 10MB
+        options->max_bytes_for_level_base = 256*1024*1024; //xp: LevelDB level 1 is 10MB
         // Number of files to trigger level-0 compaction. A value <0 means that
         // level-0 compaction will not be triggered by number of files at all.
         //
         // Default: 4
-        options->level0_file_num_compaction_trigger = 4;
+        options->level0_file_num_compaction_trigger = 8;
         // Soft limit on number of level-0 files. We start slowing down writes at this
         // point. A value <0 means that no writing slow down will be triggered by
         // number of files in level-0.
         //
         // Default: 20
-        options->level0_slowdown_writes_trigger = 20;
+        options->level0_slowdown_writes_trigger = 60;
         // Maximum number of level-0 files.  We stop writes at this point.
         //
         // Default: 36
-        options->level0_stop_writes_trigger = 36;
+        options->level0_stop_writes_trigger = 64;
         
 
 		// save with LevelDB
@@ -294,19 +294,35 @@ namespace ycsbc {
     }
 
     void TitanDB::PrintStats() {
-        cout<<"read not found:"<<noResult<<endl;
-        string stats;
-        db_->GetProperty("rocksdb.stats",&stats);
-        cout<<stats<<endl;
-  cout << "-------------------------------" << endl;
-      cout << "SUMMARY 95th latency (us) of this run with HDR measurement" << endl;
-      cout << "ALL      GET      PUT      UPD" << endl;
-      fprintf(stdout, "%-8ld %-8ld %-8ld %-8ld\n",
+      cout<<"read not found:"<<noResult<<endl;
+      string stats;
+      db_->GetProperty("rocksdb.stats",&stats);
+      cout<<stats<<endl;
+
+      cout << "-------------------------------" << endl;
+      cout << "SUMMARY latency (us) of this run with HDR measurement" << endl;
+	  cout << "         ALL        GET        PUT        UPD" << endl;
+      fprintf(stdout, "mean     %-10lf %-10lf %-10lf %-10lf\n",
+                hdr_mean(hdr_),
+                hdr_mean(hdr_get_),
+                hdr_mean(hdr_put_),
+                hdr_mean(hdr_update_));
+      fprintf(stdout, "95th     %-10ld %-10ld %-10ld %-10ld\n",
                 hdr_value_at_percentile(hdr_, 95),
                 hdr_value_at_percentile(hdr_get_, 95),
                 hdr_value_at_percentile(hdr_put_, 95),
                 hdr_value_at_percentile(hdr_update_, 95));
- 
+      fprintf(stdout, "99th     %-10ld %-10ld %-10ld %-10ld\n",
+                hdr_value_at_percentile(hdr_, 99),
+                hdr_value_at_percentile(hdr_get_, 99),
+                hdr_value_at_percentile(hdr_put_, 99),
+                hdr_value_at_percentile(hdr_update_, 99));
+      fprintf(stdout, "99.99th  %-10ld %-10ld %-10ld %-10ld\n",
+                hdr_value_at_percentile(hdr_, 99.99),
+                hdr_value_at_percentile(hdr_get_, 99.99),
+                hdr_value_at_percentile(hdr_put_, 99.99),
+                hdr_value_at_percentile(hdr_update_, 99.99));
+
       int ret = hdr_percentiles_print(
               hdr_,
               f_hdr_output_,  // File to write to

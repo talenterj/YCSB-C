@@ -73,17 +73,40 @@ monitoring() {
 }
 
 
+calc() {
+  sed -e '/#/d' $logtmp > tmp3 
+  
+  avgCPU=$(awk '{cpu+=$2}  END{print cpu/NR}' tmp3)
+  avgRSS=$(awk '{rss+=$3}  END{print rss/NR}' tmp3)
+  avgGPU=$(awk '{gpu+=$4}  END{print gpu/NR}' tmp3)
+  avgGMem=$(awk '{gmem+=$5}  END{print gmem/NR}' tmp3)
+  rm tmp3
+}
+
 refineLog () {
-  if [ "$log" = "stats.output" ]
+  
+  calc
+  currTime=$(date +%Y%m%d%H%M%S)
+
+  if [ "$log" = "top.stats" ]
   then
-    sed -e '/# wait for process/d' $logtmp > stats.output
-	echo "## cmd line: $pargs" | tee -a stats.output
-	echo "logs output file: stats.output"
+    sed -e '/# wait for process/d' $logtmp > "stats-$currTime".stats
+	echo "## cmd line: $pargs" | tee -a "stats-$currTime".stats
+    echo "avg CPU : $avgCPU"  | tee -a "stats-$currTime".stats
+    echo "avg RSS : $avgRSS"  | tee -a "stats-$currTime".stats
+    echo "avg GPU : $avgGPU"  | tee -a "stats-$currTime".stats
+    echo "avg GMem: $avgGMem"  | tee -a "stats-$currTime".stats
+	echo "logs output file: stats-$currTime.stats"
   else
-    sed -e '/# wait for process/d' $logtmp > $log
-	echo "## cmd line: $pargs" | tee -a $log
-	echo "logs output file: $log"
+    sed -e '/# wait for process/d' $logtmp > "$log-$currTime".stats
+	echo "## cmd line: $pargs" | tee -a "$log-$currTime".stats
+    echo "avg CPU : $avgCPU"  | tee -a "$log-$currTime".stats
+    echo "avg RSS : $avgRSS"  | tee -a "$log-$currTime".stats
+    echo "avg GPU : $avgGPU"  | tee -a "$log-$currTime".stats
+    echo "avg GMem: $avgGMem"  | tee -a "$log-$currTime".stats
+	echo "logs output file: $log-$currTime.stats"
   fi
+
   rm $logtmp
 }
 
@@ -105,7 +128,7 @@ fi
 
 
 patient=0
-max_patient=330
+max_patient=120
 while [ $patient -lt $max_patient ]; do
   pid=$(pidof $pname)
   if [ "$pid" = "" ]
@@ -127,8 +150,8 @@ else
   # activate monitoring
   if [ "$2" = "" ]
   then
-    echo "# seems invalid stats output file name, use default stats.output"
-	log="stats.output"
+    echo "# seems invalid stats output file name, use default top.stats"
+	log="top.stats"
   else
     log=$2
   fi

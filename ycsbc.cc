@@ -7,6 +7,7 @@
 //
 
 #include <cstring>
+#include <thread>
 #include <string>
 #include <iostream>
 #include <vector>
@@ -72,6 +73,10 @@ int DelegateClient(ycsbc::DB *db, ycsbc::CoreWorkload *wl, const int num_ops,
 
   }
   db->Close();
+
+  std::thread::id this_id = std::this_thread::get_id();
+  std::cout << "##### thread " << this_id << ", op finished:" << oks << endl;
+
   return oks;
 }
 
