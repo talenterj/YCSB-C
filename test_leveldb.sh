@@ -13,6 +13,7 @@ rmdb() {
 }
 
 
+
 if [ $# -lt 1 ]; then
 	echo 'Usage : ./xxxx.sh [rocksdb|leveldb|titan] [load|run]'
 	exit 0
@@ -23,7 +24,7 @@ chill_optane() {
   echo "# sleep 60s to avoid possible OPTANE in-drive cache effects."
   echo "# you could avoid this by commenting there in test_leveldb.sh."
   
-  patient=60
+  patient=30
   while [ $patient -gt 0 ]; do
     echo "# $patient seconds left to start $1" 
     patient=$(( $patient - 1 ))
@@ -38,6 +39,12 @@ case $1 in
 			'load')
 			    #rmdb
 				./ycsbc -db rocksdb -dbpath $dbpath -threads 1 -P $workload -load true
+				if [ ! -f "hdr/rocksdb-lat.hgrm" ]; then
+				  rm "hdr/rocksdb-lat.hgrm"
+				fi
+				if [ ! -f "hdr/rocksdb-lat.hiccup" ]; then
+				  rm "hdr/rocksdb-lat.hiccup"
+				fi
 				;;
 			'run')
 			    chill_optane
@@ -54,6 +61,18 @@ case $1 in
 			'load')
 			    rmdb
 				./ycsbc -db leveldb -dbpath $dbpath -threads 1 -P $workload -load true
+				if [ ! -f "hdr/cuda-lat.hgrm" ]; then
+				  rm "hdr/cuda-lat.hgrm"
+				fi
+				if [ ! -f "hdr/cuda-lat.hiccup" ]; then
+				  rm "hdr/cuda-lat.hiccup"
+				fi
+				if [ ! -f "hdr/leveldb-lat.hgrm" ]; then
+				  rm "hdr/leveldb-lat.hgrm"
+				fi
+				if [ ! -f "hdr/leveldb-lat.hiccup" ]; then
+				  rm "hdr/leveldb-lat.hiccup"
+				fi
 				;;
 			'run')
 			    chill_optane
@@ -70,6 +89,12 @@ case $1 in
 			'load')
 			    rmdb
 				./ycsbc -db titandb -dbpath $dbpath -threads 1 -P $workload -load true
+				if [ ! -f "hdr/titan-lat.hgrm" ]; then
+				  rm "hdr/titan-lat.hgrm"
+				fi
+				if [ ! -f "hdr/titan-lat.hiccup" ]; then
+				  rm "hdr/titan-lat.hiccup"
+				fi
 				;;
 			'run')
 			    chill_optane

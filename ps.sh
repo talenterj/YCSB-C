@@ -128,7 +128,7 @@ fi
 
 
 patient=0
-max_patient=120
+max_patient=360
 while [ $patient -lt $max_patient ]; do
   pid=$(pidof $pname)
   if [ "$pid" = "" ]

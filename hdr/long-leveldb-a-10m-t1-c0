@@ -1,0 +1,350 @@
+# sleep 60s to avoid possible OPTANE in-drive cache effects.
+# you could avoid this by commenting there in test_leveldb.sh.
+# 300 seconds left to start 
+# 299 seconds left to start 
+# 298 seconds left to start 
+# 297 seconds left to start 
+# 296 seconds left to start 
+# 295 seconds left to start 
+# 294 seconds left to start 
+# 293 seconds left to start 
+# 292 seconds left to start 
+# 291 seconds left to start 
+# 290 seconds left to start 
+# 289 seconds left to start 
+# 288 seconds left to start 
+# 287 seconds left to start 
+# 286 seconds left to start 
+# 285 seconds left to start 
+# 284 seconds left to start 
+# 283 seconds left to start 
+# 282 seconds left to start 
+# 281 seconds left to start 
+# 280 seconds left to start 
+# 279 seconds left to start 
+# 278 seconds left to start 
+# 277 seconds left to start 
+# 276 seconds left to start 
+# 275 seconds left to start 
+# 274 seconds left to start 
+# 273 seconds left to start 
+# 272 seconds left to start 
+# 271 seconds left to start 
+# 270 seconds left to start 
+# 269 seconds left to start 
+# 268 seconds left to start 
+# 267 seconds left to start 
+# 266 seconds left to start 
+# 265 seconds left to start 
+# 264 seconds left to start 
+# 263 seconds left to start 
+# 262 seconds left to start 
+# 261 seconds left to start 
+# 260 seconds left to start 
+# 259 seconds left to start 
+# 258 seconds left to start 
+# 257 seconds left to start 
+# 256 seconds left to start 
+# 255 seconds left to start 
+# 254 seconds left to start 
+# 253 seconds left to start 
+# 252 seconds left to start 
+# 251 seconds left to start 
+# 250 seconds left to start 
+# 249 seconds left to start 
+# 248 seconds left to start 
+# 247 seconds left to start 
+# 246 seconds left to start 
+# 245 seconds left to start 
+# 244 seconds left to start 
+# 243 seconds left to start 
+# 242 seconds left to start 
+# 241 seconds left to start 
+# 240 seconds left to start 
+# 239 seconds left to start 
+# 238 seconds left to start 
+# 237 seconds left to start 
+# 236 seconds left to start 
+# 235 seconds left to start 
+# 234 seconds left to start 
+# 233 seconds left to start 
+# 232 seconds left to start 
+# 231 seconds left to start 
+# 230 seconds left to start 
+# 229 seconds left to start 
+# 228 seconds left to start 
+# 227 seconds left to start 
+# 226 seconds left to start 
+# 225 seconds left to start 
+# 224 seconds left to start 
+# 223 seconds left to start 
+# 222 seconds left to start 
+# 221 seconds left to start 
+# 220 seconds left to start 
+# 219 seconds left to start 
+# 218 seconds left to start 
+# 217 seconds left to start 
+# 216 seconds left to start 
+# 215 seconds left to start 
+# 214 seconds left to start 
+# 213 seconds left to start 
+# 212 seconds left to start 
+# 211 seconds left to start 
+# 210 seconds left to start 
+# 209 seconds left to start 
+# 208 seconds left to start 
+# 207 seconds left to start 
+# 206 seconds left to start 
+# 205 seconds left to start 
+# 204 seconds left to start 
+# 203 seconds left to start 
+# 202 seconds left to start 
+# 201 seconds left to start 
+# 200 seconds left to start 
+# 199 seconds left to start 
+# 198 seconds left to start 
+# 197 seconds left to start 
+# 196 seconds left to start 
+# 195 seconds left to start 
+# 194 seconds left to start 
+# 193 seconds left to start 
+# 192 seconds left to start 
+# 191 seconds left to start 
+# 190 seconds left to start 
+# 189 seconds left to start 
+# 188 seconds left to start 
+# 187 seconds left to start 
+# 186 seconds left to start 
+# 185 seconds left to start 
+# 184 seconds left to start 
+# 183 seconds left to start 
+# 182 seconds left to start 
+# 181 seconds left to start 
+# 180 seconds left to start 
+# 179 seconds left to start 
+# 178 seconds left to start 
+# 177 seconds left to start 
+# 176 seconds left to start 
+# 175 seconds left to start 
+# 174 seconds left to start 
+# 173 seconds left to start 
+# 172 seconds left to start 
+# 171 seconds left to start 
+# 170 seconds left to start 
+# 169 seconds left to start 
+# 168 seconds left to start 
+# 167 seconds left to start 
+# 166 seconds left to start 
+# 165 seconds left to start 
+# 164 seconds left to start 
+# 163 seconds left to start 
+# 162 seconds left to start 
+# 161 seconds left to start 
+# 160 seconds left to start 
+# 159 seconds left to start 
+# 158 seconds left to start 
+# 157 seconds left to start 
+# 156 seconds left to start 
+# 155 seconds left to start 
+# 154 seconds left to start 
+# 153 seconds left to start 
+# 152 seconds left to start 
+# 151 seconds left to start 
+# 150 seconds left to start 
+# 149 seconds left to start 
+# 148 seconds left to start 
+# 147 seconds left to start 
+# 146 seconds left to start 
+# 145 seconds left to start 
+# 144 seconds left to start 
+# 143 seconds left to start 
+# 142 seconds left to start 
+# 141 seconds left to start 
+# 140 seconds left to start 
+# 139 seconds left to start 
+# 138 seconds left to start 
+# 137 seconds left to start 
+# 136 seconds left to start 
+# 135 seconds left to start 
+# 134 seconds left to start 
+# 133 seconds left to start 
+# 132 seconds left to start 
+# 131 seconds left to start 
+# 130 seconds left to start 
+# 129 seconds left to start 
+# 128 seconds left to start 
+# 127 seconds left to start 
+# 126 seconds left to start 
+# 125 seconds left to start 
+# 124 seconds left to start 
+# 123 seconds left to start 
+# 122 seconds left to start 
+# 121 seconds left to start 
+# 120 seconds left to start 
+# 119 seconds left to start 
+# 118 seconds left to start 
+# 117 seconds left to start 
+# 116 seconds left to start 
+# 115 seconds left to start 
+# 114 seconds left to start 
+# 113 seconds left to start 
+# 112 seconds left to start 
+# 111 seconds left to start 
+# 110 seconds left to start 
+# 109 seconds left to start 
+# 108 seconds left to start 
+# 107 seconds left to start 
+# 106 seconds left to start 
+# 105 seconds left to start 
+# 104 seconds left to start 
+# 103 seconds left to start 
+# 102 seconds left to start 
+# 101 seconds left to start 
+# 100 seconds left to start 
+# 99 seconds left to start 
+# 98 seconds left to start 
+# 97 seconds left to start 
+# 96 seconds left to start 
+# 95 seconds left to start 
+# 94 seconds left to start 
+# 93 seconds left to start 
+# 92 seconds left to start 
+# 91 seconds left to start 
+# 90 seconds left to start 
+# 89 seconds left to start 
+# 88 seconds left to start 
+# 87 seconds left to start 
+# 86 seconds left to start 
+# 85 seconds left to start 
+# 84 seconds left to start 
+# 83 seconds left to start 
+# 82 seconds left to start 
+# 81 seconds left to start 
+# 80 seconds left to start 
+# 79 seconds left to start 
+# 78 seconds left to start 
+# 77 seconds left to start 
+# 76 seconds left to start 
+# 75 seconds left to start 
+# 74 seconds left to start 
+# 73 seconds left to start 
+# 72 seconds left to start 
+# 71 seconds left to start 
+# 70 seconds left to start 
+# 69 seconds left to start 
+# 68 seconds left to start 
+# 67 seconds left to start 
+# 66 seconds left to start 
+# 65 seconds left to start 
+# 64 seconds left to start 
+# 63 seconds left to start 
+# 62 seconds left to start 
+# 61 seconds left to start 
+# 60 seconds left to start 
+# 59 seconds left to start 
+# 58 seconds left to start 
+# 57 seconds left to start 
+# 56 seconds left to start 
+# 55 seconds left to start 
+# 54 seconds left to start 
+# 53 seconds left to start 
+# 52 seconds left to start 
+# 51 seconds left to start 
+# 50 seconds left to start 
+# 49 seconds left to start 
+# 48 seconds left to start 
+# 47 seconds left to start 
+# 46 seconds left to start 
+# 45 seconds left to start 
+# 44 seconds left to start 
+# 43 seconds left to start 
+# 42 seconds left to start 
+# 41 seconds left to start 
+# 40 seconds left to start 
+# 39 seconds left to start 
+# 38 seconds left to start 
+# 37 seconds left to start 
+# 36 seconds left to start 
+# 35 seconds left to start 
+# 34 seconds left to start 
+# 33 seconds left to start 
+# 32 seconds left to start 
+# 31 seconds left to start 
+# 30 seconds left to start 
+# 29 seconds left to start 
+# 28 seconds left to start 
+# 27 seconds left to start 
+# 26 seconds left to start 
+# 25 seconds left to start 
+# 24 seconds left to start 
+# 23 seconds left to start 
+# 22 seconds left to start 
+# 21 seconds left to start 
+# 20 seconds left to start 
+# 19 seconds left to start 
+# 18 seconds left to start 
+# 17 seconds left to start 
+# 16 seconds left to start 
+# 15 seconds left to start 
+# 14 seconds left to start 
+# 13 seconds left to start 
+# 12 seconds left to start 
+# 11 seconds left to start 
+# 10 seconds left to start 
+# 9 seconds left to start 
+# 8 seconds left to start 
+# 7 seconds left to start 
+# 6 seconds left to start 
+# 5 seconds left to start 
+# 4 seconds left to start 
+# 3 seconds left to start 
+# 2 seconds left to start 
+# 1 seconds left to start 
+---- dbname:leveldb  dbpath:/home/xp/OPTANE/ycsb ----
+dbname:leveldb
+dboption:0
+dbpath:/home/xp/OPTANE/ycsb
+dbstatistics:true
+dbwaitforbalance:false
+fieldcount:1
+fieldlength:256
+insertproportion:0
+load:false
+operationcount:100000000
+readallfields:true
+readproportion:0.5
+recordcount:100000000
+requestdistribution:zipfian
+run:true
+scanproportion:0
+threadcount:1
+updateproportion:0.5
+workload:com.yahoo.ycsb.workloads.CoreWorkload
+----------------------------------------
+##### thread 140482455865088, op finished:100000000
+********** run result **********
+all opeartion records:100000000  use time:2623.140 s  IOPS:38122.25 iops
+
+read ops  :49996687  use time:2015.977 s  IOPS:24800.22 iops
+update ops:50003313  use time:590.172 s  IOPS:84726.69 iops
+********************************
+-------------- db statistics --------------
+read not found:0
+                               Compactions
+Level  Files Size(MB) Time(sec) Read(MB) Write(MB)
+--------------------------------------------------
+  0       10       36        92        0     14868
+  1       99      253      1651   207419    197946
+  2      882     2559       338    48883     47045
+  3     6518    25434       205    35334     34604
+  4     7009    28503         0        0         0
+
+-------------------------------
+SUMMARY latency (us) of this run with HDR measurement
+         ALL        GET        PUT        UPD
+mean     18.977784  38.230338  9.137437   9.568129  
+95th     78         100        11         12        
+99th     114        148        16         16        
+99.99th  5023       26527      4519       4519      
+-------------------------------
+-------------------------------------------

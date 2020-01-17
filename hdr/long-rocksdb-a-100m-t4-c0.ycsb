@@ -1,0 +1,114 @@
+# sleep 60s to avoid possible OPTANE in-drive cache effects.
+# you could avoid this by commenting there in test_leveldb.sh.
+# 30 seconds left to start 
+# 29 seconds left to start 
+# 28 seconds left to start 
+# 27 seconds left to start 
+# 26 seconds left to start 
+# 25 seconds left to start 
+# 24 seconds left to start 
+# 23 seconds left to start 
+# 22 seconds left to start 
+# 21 seconds left to start 
+# 20 seconds left to start 
+# 19 seconds left to start 
+# 18 seconds left to start 
+# 17 seconds left to start 
+# 16 seconds left to start 
+# 15 seconds left to start 
+# 14 seconds left to start 
+# 13 seconds left to start 
+# 12 seconds left to start 
+# 11 seconds left to start 
+# 10 seconds left to start 
+# 9 seconds left to start 
+# 8 seconds left to start 
+# 7 seconds left to start 
+# 6 seconds left to start 
+# 5 seconds left to start 
+# 4 seconds left to start 
+# 3 seconds left to start 
+# 2 seconds left to start 
+# 1 seconds left to start 
+---- dbname:rocksdb  dbpath:/home/xp/OPTANE/ycsb ----
+dbname:rocksdb
+dboption:0
+dbpath:/home/xp/OPTANE/ycsb
+dbstatistics:true
+dbwaitforbalance:false
+fieldcount:1
+fieldlength:256
+insertproportion:0
+load:false
+operationcount:100000000
+readallfields:true
+readproportion:0.5
+recordcount:100000000
+requestdistribution:zipfian
+run:true
+scanproportion:0
+threadcount:4
+updateproportion:0.5
+workload:com.yahoo.ycsb.workloads.CoreWorkload
+----------------------------------------
+##### thread 139715197343488, op finished:25000000
+##### thread 139714900236032, op finished:25000000
+##### thread 139715205736192, op finished:25000000
+##### thread 139714749265664, op finished:25000000
+********** run result **********
+all opeartion records:100000000  use time:4875.831 s  IOPS:20509.33 iops
+
+read ops  :49912586  use time:9314.150 s  IOPS:5358.79 iops
+update ops:49501062  use time:8874.831 s  IOPS:5577.69 iops
+********************************
+-------------- db statistics --------------
+read not found:0
+
+** Compaction Stats [default] **
+Level    Files   Size     Score Read(GB)  Rn(GB) Rnp1(GB) Write(GB) Wnew(GB) Moved(GB) W-Amp Rd(MB/s) Wr(MB/s) Comp(sec) CompMergeCPU(sec) Comp(cnt) Avg(sec) KeyIn KeyDrop
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  L0     15/12  34.22 MB   0.8      0.0     0.0      0.0       9.8      9.8       0.0   1.0      0.0    114.7     87.67             80.39      4603    0.019       0      0
+  L1    220/220 761.33 MB   0.0    288.9     9.8    279.1     283.3      4.2       0.0  28.9     95.0     93.2   3112.38           2983.56       292   10.659     99M    19M
+  L2   2160/0    7.45 GB   3.0     35.2     5.5     29.7      33.8      4.1       0.0   6.2     95.7     92.0    376.18            359.85      1667    0.226     39M  3503K
+  L3  12185/0   46.64 GB   1.9     46.2    16.3     29.9      45.7     15.8       0.0   2.8     99.5     98.4    475.74            453.82      4057    0.117     37M   919K
+ Sum  14580/232 54.86 GB   0.0    370.3    31.6    338.6     372.6     34.0       0.0  37.9     93.6     94.2   4051.98           3877.61     10619    0.382    175M    23M
+ Int      0/0    0.00 KB   0.0      6.3     0.3      6.0       6.3      0.3       0.0  37.4     87.4     87.5     73.75             70.72       133    0.555   3900K   497K
+
+** Compaction Stats [default] **
+Priority    Files   Size     Score Read(GB)  Rn(GB) Rnp1(GB) Write(GB) Wnew(GB) Moved(GB) W-Amp Rd(MB/s) Wr(MB/s) Comp(sec) CompMergeCPU(sec) Comp(cnt) Avg(sec) KeyIn KeyDrop
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Low      0/0    0.00 KB   0.0    370.3    31.6    338.6     362.8     24.1       0.0   0.0     95.6     93.7   3964.30           3797.23      6016    0.659    175M    23M
+High      0/0    0.00 KB   0.0      0.0     0.0      0.0       9.8      9.8       0.0   0.0      0.0    114.7     87.66             80.39      4602    0.019       0      0
+User      0/0    0.00 KB   0.0      0.0     0.0      0.0       0.0      0.0       0.0   0.0      0.0    316.3      0.01              0.00         1    0.010       0      0
+Uptime(secs): 4882.0 total, 80.5 interval
+Flush(GB): cumulative 9.823, interval 0.169
+AddFile(GB): cumulative 0.000, interval 0.000
+AddFile(Total Files): cumulative 0, interval 0
+AddFile(L0 Files): cumulative 0, interval 0
+AddFile(Keys): cumulative 0, interval 0
+Cumulative compaction: 372.60 GB write, 78.15 MB/s write, 370.26 GB read, 77.66 MB/s read, 4052.0 seconds
+Interval compaction: 6.30 GB write, 80.20 MB/s write, 6.29 GB read, 80.08 MB/s read, 73.8 seconds
+Stalls(count): 2823 level0_slowdown, 1167 level0_slowdown_with_compaction, 6 level0_numfiles, 6 level0_numfiles_with_compaction, 0 stop for pending_compaction_bytes, 686 slowdown for pending_compaction_bytes, 0 memtable_compaction, 0 memtable_slowdown, interval 14 total count
+
+** File Read Latency Histogram By Level [default] **
+
+** DB Stats **
+Uptime(secs): 4882.0 total, 80.5 interval
+Cumulative writes: 49M writes, 49M keys, 47M commit groups, 1.1 writes per commit group, ingest: 14.78 GB, 3.10 MB/s
+Cumulative WAL: 49M writes, 0 syncs, 49998861.00 writes per sync, written: 14.78 GB, 3.10 MB/s
+Cumulative stall: 00:34:49.686 H:M:S, 42.8 percent
+Interval writes: 857K writes, 857K keys, 821K commit groups, 1.0 writes per commit group, ingest: 259.74 MB, 3.23 MB/s
+Interval WAL: 857K writes, 0 syncs, 857838.00 writes per sync, written: 0.25 MB, 3.23 MB/s
+Interval stall: 00:00:26.889 H:M:S, 33.4 percent
+
+-------------------------------
+SUMMARY latency (us) of this run with HDR measurement
+         ALL        GET        PUT        UPD
+mean     186.134967 182.064376 186.389338 187.978876
+95th     793        606        1145       1150      
+99th     2343       870        3271       3287      
+99.99th  4395       2093       5247       6067      
+-------------------------------
+-------------------------------------------
+wait for closing and deleting RocksDB
+~RocksDB() success, terminated.

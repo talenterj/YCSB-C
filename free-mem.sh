@@ -6,3 +6,5 @@ echo 2 > /proc/sys/vm/drop_caches
 echo 3 > /proc/sys/vm/drop_caches
 #刷新文件系统缓冲区
 sync
+
+free -hg

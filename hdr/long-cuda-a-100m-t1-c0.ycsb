@@ -1,0 +1,82 @@
+# sleep 60s to avoid possible OPTANE in-drive cache effects.
+# you could avoid this by commenting there in test_leveldb.sh.
+# 30 seconds left to start 
+# 29 seconds left to start 
+# 28 seconds left to start 
+# 27 seconds left to start 
+# 26 seconds left to start 
+# 25 seconds left to start 
+# 24 seconds left to start 
+# 23 seconds left to start 
+# 22 seconds left to start 
+# 21 seconds left to start 
+# 20 seconds left to start 
+# 19 seconds left to start 
+# 18 seconds left to start 
+# 17 seconds left to start 
+# 16 seconds left to start 
+# 15 seconds left to start 
+# 14 seconds left to start 
+# 13 seconds left to start 
+# 12 seconds left to start 
+# 11 seconds left to start 
+# 10 seconds left to start 
+# 9 seconds left to start 
+# 8 seconds left to start 
+# 7 seconds left to start 
+# 6 seconds left to start 
+# 5 seconds left to start 
+# 4 seconds left to start 
+# 3 seconds left to start 
+# 2 seconds left to start 
+# 1 seconds left to start 
+max-key:18659 max-gdi:4764 blk:885 M:512 MaxOutFile:15728640
+---- dbname:leveldb  dbpath:/home/xp/OPTANE/ycsb ----
+dbname:leveldb
+dboption:0
+dbpath:/home/xp/OPTANE/ycsb
+dbstatistics:true
+dbwaitforbalance:false
+fieldcount:1
+fieldlength:256
+insertproportion:0
+load:false
+operationcount:100000000
+readallfields:true
+readproportion:0.5
+recordcount:100000000
+requestdistribution:zipfian
+run:true
+scanproportion:0
+threadcount:1
+updateproportion:0.5
+workload:com.yahoo.ycsb.workloads.CoreWorkload
+----------------------------------------
+##### thread 140228803163904, op finished:100000000
+********** run result **********
+all opeartion records:100000000  use time:3190.966 s  IOPS:31338.48 iops
+
+read ops  :49996687  use time:2297.872 s  IOPS:21757.82 iops
+update ops:50003313  use time:870.917 s  IOPS:57414.54 iops
+********************************
+-------------- db statistics --------------
+read not found:0
+                               Compactions
+Level  Files Size(MB) Time(sec) Read(MB) Write(MB)
+--------------------------------------------------
+  0        0        0        92        0     14865
+  1        2        1        66    20948     15821
+  2       44      100       957   260114    257410
+  3      395     1000      1073   294451    291359
+  4     2900     9998        99    34168     30742
+  5    11697    46174         4     1502      1447
+
+-------------------------------
+SUMMARY latency (us) of this run with HDR measurement
+         ALL        GET        PUT        UPD
+mean     24.112220  43.356114  14.205210  14.777886 
+95th     75         108        14         15        
+99th     128        170        22         23        
+99.99th  28991      31471      26975      26975     
+-------------------------------
+-------------------------------------------

@@ -111,14 +111,14 @@ namespace ycsbc {
         //  default 64MB
         options->write_buffer_size = 4 * 1024 * 1024;
         // sst file size
-        options->target_file_size_base = 4 * 1024 * 1024;
+        options->target_file_size_base = 4 * 1024 * 1024 + 100*1024;
         // tune a large number, or loading 0.1 billion KVs
         //  will failed with IOError.
         options->max_open_files = 4096;
         // max # of cocurrent jobs (compact + flushes)
         //  default is 2.
         //  our Intel E5-1620 v4 has 8 logic cores
-        options->max_background_jobs = 4;
+        options->max_background_jobs = 8;
         // The maximum number of write buffers that are built up in memory.
         // The default and the minimum number is 2, so that when 1 write buffer
         // is being flushed to storage, new writes can continue to the other
@@ -128,7 +128,7 @@ namespace ycsbc {
         // allowed.
         //
         // Default: 2
-        options->max_write_buffer_number = 6;
+        //options->max_write_buffer_number = 6;
         // Control maximum total data size for a level.
         // max_bytes_for_level_base is the max total for level-1.
         // Maximum number of bytes for level L can be calculated as
@@ -139,7 +139,7 @@ namespace ycsbc {
         // and total file size for level-3 will be 20GB.
         //
         // Default: 256MB.
-        options->max_bytes_for_level_base = 256*1024*1024; //xp: leveldb 'MaxBytesForLevel()' 
+        //options->max_bytes_for_level_base = 256*1024*1024; //xp: leveldb 'MaxBytesForLevel()' 
         // Number of files to trigger level-0 compaction. A value <0 means that
         // level-0 compaction will not be triggered by number of files at all.
         //
@@ -149,7 +149,7 @@ namespace ycsbc {
 		// We can therefore estimate level 0 size in stable state as 
 		// write_buffer_size * min_write_buffer_number_to_merge *
 		// level0_file_num_compaction_trigger
-        options->level0_file_num_compaction_trigger = 4;
+        //options->level0_file_num_compaction_trigger = 4;
         //options->level0_file_num_compaction_trigger = 64; // 1024MB
 		//
         // Soft limit on number of level-0 files. We start slowing down writes at this
@@ -157,11 +157,11 @@ namespace ycsbc {
         // number of files in level-0.
         //
         // Default: 20
-        options->level0_slowdown_writes_trigger = 60;
+        //options->level0_slowdown_writes_trigger = 60;
         // Maximum number of level-0 files.  We stop writes at this point.
         //
         // Default: 36
-        options->level0_stop_writes_trigger = 64;
+        //options->level0_stop_writes_trigger = 64;
 
 
 		

@@ -20,6 +20,15 @@ onCtrlC () {
 }
 
 
+usage() {
+  echo "Usage:"
+  echo "  ./cpu-load.sh [load level]"
+  echo ""
+  echo "Use stress-ng randomly generate CPU load for a"
+  echo "short moment (0 to 0.5s) every 10s."
+}
+
+
 while true
 do
   randslice=$(random_from_range)

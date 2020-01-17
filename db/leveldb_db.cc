@@ -61,26 +61,14 @@ namespace ycsbc {
         free(hdr_);
         exit(0);
       }
-      //cout << "hdr_ init success, &hdr_=" << &hdr_ << endl;
 
-	  //time_t curr_t = time(0);
-	  //char tmp[32];
-	  //strftime(tmp,
-	  //              sizeof(tmp),
-	  //  			"%Y%m%d%H%M%S",
-	  //  			localtime(&curr_t)); //xp: get the time
-	  //std::string t_str = tmp;
-	  //std::string f_name_lat_perc = "./hdr/cuda-lat-perc-" + t_str + ".output";
-	  //std::string f_name_lat_hiccup = "./hdr/cuda-lat-hiccup-" + t_str + ".output";
-	  //
-	  //strcpy(tmp, f_name_lat_perc.c_str());
-      f_hdr_output_= std::fopen("./hdr/cuda-lat.hgrm", "w+");
+      f_hdr_output_= std::fopen("./hdr/leveldb-lat.hgrm", "w+");
       if(!f_hdr_output_) {
         std::perror("hdr output file opening failed");
         exit(0);
       }
 	  //strcpy(tmp, f_name_lat_hiccup.c_str());
-      f_hdr_hiccup_output_ = std::fopen("./hdr/cuda-lat.hiccup", "w+");
+      f_hdr_hiccup_output_ = std::fopen("./hdr/leveldb-lat.hiccup", "w+");
       if(!f_hdr_hiccup_output_) {
         std::perror("hdr hiccup output file opening failed");
         exit(0);
@@ -121,7 +109,7 @@ namespace ycsbc {
 
         int dboption = stoi(props["dboption"]);
 
-        if ( dboption == 1) {  //Novelsm options
+        if (0&& dboption == 1) {  //Novelsm options
 #ifdef NOVELSM 
             printf("set Novelsm options!\n");
             //options->db_mem = "/pmem/nvm";
@@ -143,12 +131,9 @@ namespace ycsbc {
         if(tx_xtime > 3600000000) {
           cerr << "too large tx_xtime" << endl;
         } else {
-          //cout << "xtime: " << tx_xtime << endl;
-	  //cout << "DEBUG- &hdr_: " << &hdr_<< endl;
           hdr_record_value(hdr_, tx_xtime);
           hdr_record_value(hdr_last_1s_, tx_xtime);
           hdr_record_value(hdr_get_, tx_xtime);
-          //cout << "ops: " << hdrhistogram->total_count << endl;
         }
         //printf("read:key:%lu-%s [%lu]\n",key.size(),key.data(),value.size());
         if(s.ok()) {
@@ -208,7 +193,7 @@ namespace ycsbc {
         }
         if(!s.ok()){
             //cerr<<"insert ERROR! error code: " << s.code() << endl;
-            cerr<<"CUDA PUT() ERROR!" << endl;
+            cerr<<"LevelDB PUT() ERROR!" << endl;
             exit(0);
         }
         

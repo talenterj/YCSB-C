@@ -55,7 +55,7 @@ int DelegateClient(ycsbc::DB *db, ycsbc::CoreWorkload *wl, const int num_ops,
         else if (next_report_ < 500000) next_report_ += 50000;
         else                            next_report_ += 100000;
         fprintf(stderr, "... finished %d ops%30s\r", i, "");
-        fflush(stderr);
+        //fflush(stderr);
     }
     if (is_loading) {
       oks += client.DoInsert();
