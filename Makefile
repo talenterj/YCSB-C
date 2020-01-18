@@ -1,6 +1,6 @@
-LEVELDB_INC=-I/home/xp/leveldb-cuda/include
-ROCKSDB_INC=-I/home/xp/rocksdb-6.4.6/include -I/home/xp/flying/rocksdb-6.4.6/
-TITAN_INC=-I/home/xp/titan/include
+LEVELDB_INC=-I/home/xp/flying/leveldb-cuda/include
+ROCKSDB_INC=-I/home/xp/flying/rocksdb-6.4.6/include -I/home/xp/flying/rocksdb-6.4.6/
+TITAN_INC=-I/home/xp/flying/titan/include
 LOCAL_INC=-I./
 
 INCLUDE=$(LEVELDB_INC) $(ROCKSDB_INCLUDE) $(TITAN_INC) $(LOCAL_INC)

@@ -9,8 +9,8 @@
 #include <iostream>
 #include <string>
 #include "core/properties.h"
-#include <titan/db.h>
-#include <titan/options.h>
+#include "titan/db.h"
+#include "titan/options.h"
 #include "unistd.h"
 #include <hdr/hdr_histogram.h>
 #include <fstream>
