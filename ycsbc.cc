@@ -24,7 +24,6 @@ bool StrStartWith(const char *str, const char *pre);
 string ParseCommandLine(int argc, const char *argv[], utils::Properties &props);
 void Init(utils::Properties &props);
 void PrintInfo(utils::Properties &props);
-void PrintStatistics(DB *db);
 
 int DelegateClient(ycsbc::DB *db, ycsbc::CoreWorkload *wl, const int num_ops,
     bool is_loading) {
@@ -109,7 +108,7 @@ int main(const int argc, const char *argv[]) {
   cerr << props["dbname"] << '\t' << file_name << '\t' << num_threads << '\t';
   cerr << total_ops / duration / 1000 << endl;
 
-  PrintStatistics(db);
+  db->PrintStats();
 }
 
 string ParseCommandLine(int argc, const char *argv[], utils::Properties &props) {
@@ -274,8 +273,3 @@ void PrintInfo(utils::Properties &props) {
   fflush(stdout);
 }
 
-void PrintStatistics(DB *db) {
-    string statistics;
-    assert(db->GetProperty("rocksdb.stats", &statistics));
-    cout << statistics << "\n" << endl;
-}
