@@ -158,6 +158,7 @@ namespace ycsbc {
     }
 
     void RocksDB::PrintStats() {
+    	cout << "PrintStats start.\n";
         if(noResult) cout<<"read not found:"<<noResult<<endl;
         string stats;
         db_->GetProperty("rocksdb.stats",&stats);
