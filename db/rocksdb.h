@@ -22,6 +22,7 @@
 #include <rocksdb/table.h>
 #include <rocksdb/filter_policy.h>
 #include <rocksdb/options.h>
+#include <rocksdb/rate_limiter.h>
 
 using std::cout;
 using std::endl;
