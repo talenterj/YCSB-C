@@ -12,7 +12,7 @@ using namespace std;
 
 namespace ycsbc {
     RocksDB::RocksDB(const char *dbfilename, utils::Properties &props) 
-		:noResult(0), /*cache_(nullptr),*/ dbstats_(nullptr), write_sync_(false) {
+        :noResult(0), /*cache_(nullptr),*/ dbstats_(nullptr), write_sync_(false) {
         //set option
         rocksdb::Options options;
         SetOptions(&options, props);
@@ -25,29 +25,35 @@ namespace ycsbc {
     }
 
     void RocksDB::SetOptions(rocksdb::Options *options, utils::Properties &props) {
-		options->db_paths = vector<rocksdb::DbPath>();
-		options->db_paths.push_back(rocksdb::DbPath("./path0", 256l * 1024 * 1024));
-		options->db_paths.push_back(rocksdb::DbPath("./path1", 256l * 1024 * 1024));
-		options->db_paths.push_back(rocksdb::DbPath("./path2", 2560l * 1024 * 1024));
-		options->db_paths.push_back(rocksdb::DbPath("./path3", 25600l * 1024 * 1024));
+        options->db_paths = vector<rocksdb::DbPath>();
+        options->db_paths.push_back(rocksdb::DbPath("./path0", 256l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("./path1", 256l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("./path2", 2560l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("./path3", 25600l * 1024 * 1024));
 
-		options->report_bg_io_stats = true;
-		options->rate_limiter.reset(rocksdb::NewGenericRateLimiter(1000l * 1024 * 1024));
+        /*
+        options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/ssd/rocksdb/path0", 256l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/ssd/rocksdb/path1", 256l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/hdd/rocksdb/path2", 2560l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/hdd/rocksdb/path3", 25600l * 1024 * 1024));
+        */
 
+        options->report_bg_io_stats = true;
+        options->rate_limiter.reset(rocksdb::NewGenericRateLimiter(1000l * 1024 * 1024));
 
-		std::cout << "max_bytes_for_level_base: " << options->max_bytes_for_level_base << "\n";
-		std::cout << "max_bytes_for_level_multiplier: " << options->max_bytes_for_level_multiplier << "\n";
-		std::cout << "target_file_size_base: " << options->target_file_size_base << "\n";
-		std::cout << "max_background_jobs: " << options->max_background_jobs << "\n";
-		std::cout << "max_background_compactions: " << options->max_background_compactions << "\n";
-		std::cout << "max_background_flushes: " << options->max_background_flushes << "\n";
-		
+        std::cout << "max_bytes_for_level_base: " << options->max_bytes_for_level_base << "\n";
+        std::cout << "max_bytes_for_level_multiplier: " << options->max_bytes_for_level_multiplier << "\n";
+        std::cout << "target_file_size_base: " << options->target_file_size_base << "\n";
+        std::cout << "max_background_jobs: " << options->max_background_jobs << "\n";
+        std::cout << "max_background_compactions: " << options->max_background_compactions << "\n";
+        std::cout << "max_background_flushes: " << options->max_background_flushes << "\n";
+
         //// 默认的Rocksdb配置
         options->create_if_missing = true;
         //options->compression = rocksdb::kNoCompression;
         //options->enable_pipelined_write = true;
 
-		//options->max_background_compactions = 4;
+        //options->max_background_compactions = 4;
         ///options->max_background_jobs = 4;
         //options->max_bytes_for_level_base = 50ul * 1024 * 1024;
         //options->write_buffer_size = 4ul * 1024 * 1024;
@@ -61,15 +67,15 @@ namespace ycsbc {
         //options->use_direct_reads = true;
         //options->use_direct_io_for_flush_and_compaction = true;
 
-		/*
-		//no block cache
-		rocksdb::BlockBasedTableOptions table_options;
-		table_options.no_block_cache = true;
-		options->table_factory.reset(rocksdb::NewBlockBasedTableFactory(table_options));
-		*/
-		
-		/*
-		//cache
+        /*
+        //no block cache
+        rocksdb::BlockBasedTableOptions table_options;
+        table_options.no_block_cache = true;
+        options->table_factory.reset(rocksdb::NewBlockBasedTableFactory(table_options));
+        */
+
+        /*
+        //cache
         uint64_t nums = stoi(props.GetProperty(CoreWorkload::RECORD_COUNT_PROPERTY));
         uint32_t key_len = stoi(props.GetProperty(CoreWorkload::KEY_LENGTH));
         uint32_t value_len = stoi(props.GetProperty(CoreWorkload::FIELD_LENGTH_PROPERTY));
@@ -87,7 +93,7 @@ namespace ycsbc {
         }
         */
 
-		/*
+        /*
         bool statistics = utils::StrToBool(props["dbstatistics"]);
         if(statistics){
             dbstats_ = rocksdb::CreateDBStatistics();
@@ -179,7 +185,7 @@ namespace ycsbc {
     }
 
     void RocksDB::PrintStats() {
-    	cout << "PrintStats start.\n";
+        cout << "PrintStats start.\n";
         if(noResult) cout<<"read not found:"<<noResult<<endl;
         string stats;
         db_->GetProperty("rocksdb.stats",&stats);
