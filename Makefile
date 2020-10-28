@@ -8,7 +8,7 @@ LIB=-L/home/zhangxin/rocksdb-zx
 
 CC=g++
 CFLAGS=-std=c++11 -g -Wall -pthread -I./
-LDFLAGS=-lpthread -lrocksdb #-lleveldb
+LDFLAGS=-lpthread -lrt -lsnappy -lgflags -lz -lbz2 -llz4 -lzstd -ldl -lrocksdb #-lleveldb
 SUBDIRS=core db
 SUBSRCS=$(wildcard core/*.cc) $(wildcard db/*.cc)
 OBJECTS=$(SUBSRCS:.cc=.o)
