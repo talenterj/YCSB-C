@@ -1,9 +1,9 @@
 //
-//  rocksdb.h
-//  YCSB-C
+//    rocksdb.h
+//    YCSB-C
 //
-//  Created by zhangxin on 8/4/2020.
-//  Copyright (c) 2020 zhangxin <2452663915@qq.com>.
+//    Created by zhangxin on 8/4/2020.
+//    Copyright (c) 2020 zhangxin <2452663915@qq.com>.
 //
 
 #ifndef YCSB_C_ROCKS_DB_H_
@@ -28,40 +28,40 @@ using std::cout;
 using std::endl;
 
 namespace ycsbc {
-	class RocksDB : public DB {
-	public:
-		RocksDB(const char*dbfilename, utils::Properties &props);
-		
-		int Read(const std::string &table, const std::string &key,
-			const std::vector<std::string> *fields,
-			std::vector<KVPair> &result);
+    class RocksDB : public DB {
+    public:
+        RocksDB(const char*dbfilename, utils::Properties &props);
 
-		int Scan(const std::string &table, const std::string &key,
-			int len, const std::vector<std::string> *fields,
-			std::vector<std::vector<KVPair>> &result);
+        int Read(const std::string &table, const std::string &key,
+            const std::vector<std::string> *fields,
+            std::vector<KVPair> &result);
 
-		int Update(const std::string &table, const std::string &key,
-				std::vector<KVPair> &values);
+        int Scan(const std::string &table, const std::string &key,
+            int len, const std::vector<std::string> *fields,
+            std::vector<std::vector<KVPair>> &result);
 
-		int Insert(const std::string &table, const std::string &key,
-			std::vector<KVPair> &values);
+        int Update(const std::string &table, const std::string &key,
+                std::vector<KVPair> &values);
 
-		int Delete(const std::string &table, const std::string &key);
+        int Insert(const std::string &table, const std::string &key,
+            std::vector<KVPair> &values);
 
-		void PrintStats();
+        int Delete(const std::string &table, const std::string &key);
 
-		~RocksDB();
-	private:
-		rocksdb::DB *db_;
-		unsigned noResult;
-		//std::shared_ptr<rocksdb::Cache> cache_;
-		std::shared_ptr<rocksdb::Statistics> dbstats_;
-		bool write_sync_;
-		
-		void SetOptions(rocksdb::Options *options, utils::Properties &props);
-		void SerializeValues(std::vector<KVPair> &kvs, std::string &value);
-		void DeSerializeValues(std::string &value, std::vector<KVPair> &kvs);
-	};
+        void PrintStats();
+
+        ~RocksDB();
+    private:
+        rocksdb::DB *db_;
+        unsigned noResult;
+        //std::shared_ptr<rocksdb::Cache> cache_;
+        std::shared_ptr<rocksdb::Statistics> dbstats_;
+        bool write_sync_;
+
+        void SetOptions(rocksdb::Options *options, utils::Properties &props);
+        void SerializeValues(std::vector<KVPair> &kvs, std::string &value);
+        void DeSerializeValues(std::string &value, std::vector<KVPair> &kvs);
+    };
 
 } // ycsbc
 

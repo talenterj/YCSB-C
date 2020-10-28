@@ -6,7 +6,7 @@ OBJECTS=$(SOURCES:.cc=.o)
 all: $(SOURCES) $(OBJECTS)
 
 .cc.o:
-	$(CC) $(CFLAGS) $< -o $@
+    $(CC) $(CFLAGS) $< -o $@
 
 clean:
-	$(RM) $(OBJECTS)
+    $(RM) $(OBJECTS)

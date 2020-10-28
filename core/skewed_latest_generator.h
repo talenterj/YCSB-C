@@ -1,9 +1,9 @@
 //
-//  skewed_latest_generator.h
-//  YCSB-C
+//    skewed_latest_generator.h
+//    YCSB-C
 //
-//  Created by Jinglei Ren on 12/9/14.
-//  Copyright (c) 2014 Jinglei Ren <jinglei@ren.systems>.
+//    Created by Jinglei Ren on 12/9/14.
+//    Copyright (c) 2014 Jinglei Ren <jinglei@ren.systems>.
 //
 
 #ifndef YCSB_C_SKEWED_LATEST_GENERATOR_H_
@@ -20,22 +20,22 @@ namespace ycsbc {
 
 class SkewedLatestGenerator : public Generator<uint64_t> {
  public:
-  SkewedLatestGenerator(CounterGenerator &counter) :
-      basis_(counter), zipfian_(basis_.Last()) {
-    Next();
-  }
-  
-  uint64_t Next();
-  uint64_t Last() { return last_; }
+    SkewedLatestGenerator(CounterGenerator &counter) :
+            basis_(counter), zipfian_(basis_.Last()) {
+        Next();
+    }
+    
+    uint64_t Next();
+    uint64_t Last() { return last_; }
  private:
-  CounterGenerator &basis_;
-  ZipfianGenerator zipfian_;
-  std::atomic<uint64_t> last_;
+    CounterGenerator &basis_;
+    ZipfianGenerator zipfian_;
+    std::atomic<uint64_t> last_;
 };
 
 inline uint64_t SkewedLatestGenerator::Next() {
-  uint64_t max = basis_.Last();
-  return last_ = max - zipfian_.Next(max);
+    uint64_t max = basis_.Last();
+    return last_ = max - zipfian_.Next(max);
 }
 
 } // ycsbc

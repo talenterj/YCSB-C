@@ -7,8 +7,8 @@ OBJECTS=$(SOURCES:.cc=.o)
 all: $(SOURCES) $(OBJECTS)
 
 .cc.o:
-	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@
+    $(CC) $(CFLAGS) $(INCLUDES) $< -o $@
 
 clean:
-	$(RM) $(OBJECTS)
+    $(RM) $(OBJECTS)
 

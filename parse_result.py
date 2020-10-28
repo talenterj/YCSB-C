@@ -13,7 +13,7 @@ def main():
     if len(sys.argv) != 2 or sys.argv[1] == '-h':
         print "Usage: %s OutputFileName" % sys.argv[0]
         print "Statistics (.result file) for each workload " + \
-              "will be written to the workload directory."
+                "will be written to the workload directory."
         sys.exit(-1)
 
     path = sys.argv[1]

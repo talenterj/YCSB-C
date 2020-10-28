@@ -1,6 +1,6 @@
 //
-//  rocksdb.cc
-//  YCSB-C
+//    rocksdb.cc
+//    YCSB-C
 //
 
 #include "rocksdb.h"
@@ -26,11 +26,16 @@ namespace ycsbc {
 
     void RocksDB::SetOptions(rocksdb::Options *options, utils::Properties &props) {
         options->db_paths = vector<rocksdb::DbPath>();
+        /*
         options->db_paths.push_back(rocksdb::DbPath("./path0", 256l * 1024 * 1024));
         options->db_paths.push_back(rocksdb::DbPath("./path1", 256l * 1024 * 1024));
         options->db_paths.push_back(rocksdb::DbPath("./path2", 2560l * 1024 * 1024));
         options->db_paths.push_back(rocksdb::DbPath("./path3", 25600l * 1024 * 1024));
-
+        */
+        options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path0", 256l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path1", 256l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path2", 2560l * 1024 * 1024));
+        options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path3", 25600l * 1024 * 1024));
         /*
         options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/ssd/rocksdb/path0", 256l * 1024 * 1024));
         options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/ssd/rocksdb/path1", 256l * 1024 * 1024));
@@ -39,7 +44,7 @@ namespace ycsbc {
         */
 
         options->report_bg_io_stats = true;
-        options->rate_limiter.reset(rocksdb::NewGenericRateLimiter(1000l * 1024 * 1024));
+        //options->rate_limiter.reset(rocksdb::NewGenericRateLimiter(1000l * 1024 * 1024));
 
         std::cout << "max_bytes_for_level_base: " << options->max_bytes_for_level_base << "\n";
         std::cout << "max_bytes_for_level_multiplier: " << options->max_bytes_for_level_multiplier << "\n";
@@ -81,7 +86,7 @@ namespace ycsbc {
         uint32_t value_len = stoi(props.GetProperty(CoreWorkload::FIELD_LENGTH_PROPERTY));
 
         uint32_t cache_size = nums * (key_len + value_len) * 10 / 100; //10%
-        if(cache_size < 8 << 20){   //不小于8MB；
+        if(cache_size < 8 << 20){     //不小于8MB；
             cache_size = 8 << 20;
         }
 
@@ -101,11 +106,11 @@ namespace ycsbc {
         }
         */
 
-        //write_sync_ = false;    //主要是写日志，
+        //write_sync_ = false;        //主要是写日志，
     }
 
     int RocksDB::Read(const std::string &table, const std::string &key, 
-    	const std::vector<std::string> *fields, std::vector<KVPair> &result) {
+        const std::vector<std::string> *fields, std::vector<KVPair> &result) {
         string value;
         rocksdb::Status s = db_->Get(rocksdb::ReadOptions(),key,&value);
         if(s.ok()) {
@@ -128,7 +133,7 @@ namespace ycsbc {
     }
 
     int RocksDB::Scan(const std::string &table, const std::string &key, int len, const std::vector<std::string> *fields,
-                      std::vector<std::vector<KVPair>> &result) {
+            std::vector<std::vector<KVPair>> &result) {
         auto it=db_->NewIterator(rocksdb::ReadOptions());
         it->Seek(key);
         std::string val;
@@ -145,7 +150,7 @@ namespace ycsbc {
     }
 
     int RocksDB::Insert(const std::string &table, const std::string &key,
-                        std::vector<KVPair> &values){
+            std::vector<KVPair> &values){
         rocksdb::Status s;
         string value;
         SerializeValues(values,value);
@@ -162,7 +167,7 @@ namespace ycsbc {
             cerr<<"insert error\n"<<endl;
             exit(0);
         }
-       
+
         return DB::kOK;
     }
 
@@ -199,7 +204,7 @@ namespace ycsbc {
     RocksDB::~RocksDB() {
         delete db_;
         /*if (cache_.get() != nullptr) {
-             this will leak, but we're shutting down so nobody cares
+            this will leak, but we're shutting down so nobody cares
             cache_->DisownData();
         }*/
     }

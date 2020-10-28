@@ -1,9 +1,9 @@
 //
-//  basic_db.cc
-//  YCSB-C
+//    basic_db.cc
+//    YCSB-C
 //
-//  Created by Jinglei Ren on 12/17/14.
-//  Copyright (c) 2014 Jinglei Ren <jinglei@ren.systems>.
+//    Created by Jinglei Ren on 12/17/14.
+//    Copyright (c) 2014 Jinglei Ren <jinglei@ren.systems>.
 //
 
 #include "db/db_factory.h"
@@ -16,9 +16,9 @@ using ycsbc::DB;
 using ycsbc::DBFactory;
 
 DB* DBFactory::CreateDB(utils::Properties &props) {
-	if (props["dbname"] == "rocksdb") {
-		std::string dbpath = props.GetProperty("dbpath", "/tmp/ycsbc-rocksdb-test");
-		return new RocksDB(dbpath.c_str(), props);
-	} else return NULL;
+    if (props["dbname"] == "rocksdb") {
+        std::string dbpath = props.GetProperty("dbpath", "/tmp/ycsbc-rocksdb-test");
+        return new RocksDB(dbpath.c_str(), props);
+    } else return NULL;
 }
 
