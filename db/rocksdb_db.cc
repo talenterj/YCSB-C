@@ -21,46 +21,10 @@ namespace ycsbc {
   // output mean, 95th, 99th, 99.99th lat. of all operations every 1 second
   void RocksDB::latency_hiccup(uint64_t iops) {
     //fprintf(f_hdr_hiccup_output_, "mean     95th     99th     99.99th   IOPS");
-    fprintf(f_hdr_hiccup_output_, "%-11.2lf %-8ld %-8ld %-8ld %-8ld\n",
-              hdr_mean(hdr_last_1s_),
-              hdr_value_at_percentile(hdr_last_1s_, 95),
-              hdr_value_at_percentile(hdr_last_1s_, 99),
-              hdr_value_at_percentile(hdr_last_1s_, 99.99),
-			  iops);
-    hdr_reset(hdr_last_1s_);
     fflush(f_hdr_hiccup_output_);
   }
 
   RocksDB::RocksDB(const char *dbfilename, utils::Properties &props) :noResult(0){
-
-    //init hdr
-    //cerr << "DEBUG- init histogram &=" << &hdr_ << endl;
-    int r = hdr_init(
-      1,  // Minimum value
-      INT64_C(3600000000),  // Maximum value
-      3,  // Number of significant figures
-      &hdr_);  // Pointer to initialise
-    r |= hdr_init(1, INT64_C(3600000000), 3, &hdr_last_1s_);
-    r |= hdr_init(1, INT64_C(3600000000), 3, &hdr_get_);
-    r |= hdr_init(1, INT64_C(3600000000), 3, &hdr_put_);
-    r |= hdr_init(1, INT64_C(3600000000), 3, &hdr_update_);
-   
-    if((0 != r) ||
-       (NULL == hdr_) ||
-       (NULL == hdr_last_1s_) ||
-       (NULL == hdr_get_) ||
-       (NULL == hdr_put_) ||
-       (NULL == hdr_update_) ||
-       (23552 < hdr_->counts_len)) {
-      cout << "DEBUG- init hdrhistogram failed." << endl;
-      cout << "DEBUG- r=" << r << endl;
-      cout << "DEBUG- histogram=" << &hdr_ << endl;
-      cout << "DEBUG- counts_len=" << hdr_->counts_len << endl;
-      cout << "DEBUG- counts:" << hdr_->counts << ", total_c:" << hdr_->total_count << endl;
-      cout << "DEBUG- lowest:" << hdr_->lowest_trackable_value << ", max:" <<hdr_->highest_trackable_value << endl;
-      free(hdr_);
-      exit(0);
-    }
     //cout << "hdr_ init success, &hdr_=" << &hdr_ << endl;
 
     //time_t curr_t = time(0);
@@ -206,10 +170,6 @@ namespace ycsbc {
         uint64_t tx_xtime = get_now_micros() - tx_begin_time;
         if(tx_xtime > 3600000000) {
           cout << "too large tx_xtime" << endl;
-        } else {
-          hdr_record_value(hdr_, tx_xtime);
-          hdr_record_value(hdr_last_1s_, tx_xtime);
-          hdr_record_value(hdr_get_, tx_xtime);
         }
 
         if(s.ok()) {
@@ -269,10 +229,6 @@ namespace ycsbc {
         uint64_t tx_xtime = get_now_micros() - tx_begin_time;
         if(tx_xtime > 3600000000) {
           cout << "too large tx_xtime" << endl;
-        } else {
-          hdr_record_value(hdr_, tx_xtime);
-          hdr_record_value(hdr_last_1s_, tx_xtime);
-          hdr_record_value(hdr_put_, tx_xtime);
         }
 
         if(!s.ok()){
@@ -291,10 +247,6 @@ namespace ycsbc {
         uint64_t tx_xtime = get_now_micros() - tx_begin_time;
         if(tx_xtime > 3600000000) {
           cout << "too large tx_xtime" << endl;
-        } else {
-          hdr_record_value(hdr_, tx_xtime);
-          hdr_record_value(hdr_last_1s_, tx_xtime);
-          hdr_record_value(hdr_update_, tx_xtime);
         }
 
 		if(0 != s) { //xp: not OK
@@ -330,36 +282,7 @@ namespace ycsbc {
       cout << "-------------------------------" << endl;
       cout << "SUMMARY latency (us) of this run with HDR measurement" << endl;
       cout << "         ALL        GET        PUT        UPD" << endl;
-      fprintf(stdout, "mean     %-10lf %-10lf %-10lf %-10lf\n",
-                hdr_mean(hdr_),
-                hdr_mean(hdr_get_),
-                hdr_mean(hdr_put_),
-                hdr_mean(hdr_update_));
-      fprintf(stdout, "95th     %-10ld %-10ld %-10ld %-10ld\n",
-                hdr_value_at_percentile(hdr_, 95),
-                hdr_value_at_percentile(hdr_get_, 95),
-                hdr_value_at_percentile(hdr_put_, 95),
-                hdr_value_at_percentile(hdr_update_, 95));
-      fprintf(stdout, "99th     %-10ld %-10ld %-10ld %-10ld\n",
-                hdr_value_at_percentile(hdr_, 99),
-                hdr_value_at_percentile(hdr_get_, 99),
-                hdr_value_at_percentile(hdr_put_, 99),
-                hdr_value_at_percentile(hdr_update_, 99));
-      fprintf(stdout, "99.99th  %-10ld %-10ld %-10ld %-10ld\n",
-                hdr_value_at_percentile(hdr_, 99.99),
-                hdr_value_at_percentile(hdr_get_, 99.99),
-                hdr_value_at_percentile(hdr_put_, 99.99),
-                hdr_value_at_percentile(hdr_update_, 99.99));
- 
-      int ret = hdr_percentiles_print(
-              hdr_,
-              f_hdr_output_,  // File to write to
-              5,  // Granularity of printed values
-              1.0,  // Multiplier for results
-              CLASSIC);  // Format CLASSIC/CSV supported.
-      if(0 != ret) {
-        cout << "hdr percentile output print file error!" <<endl;
-      }
+
       cout << "-------------------------------" << endl;
     }
 
@@ -370,11 +293,6 @@ namespace ycsbc {
 
     RocksDB::~RocksDB() {
       printf("wait for closing and deleting RocksDB\n");
-      free(hdr_);
-      free(hdr_last_1s_);
-      free(hdr_get_);
-      free(hdr_put_);
-      free(hdr_update_);
       rocksdb::Status s;
 	  s = db_->Close();
 	  if(!s.ok()) {

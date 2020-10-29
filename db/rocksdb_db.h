@@ -21,14 +21,6 @@ using std::endl;
 namespace ycsbc {
     class RocksDB : public DB{
     public :
-        //hdr histogram
-        struct hdr_histogram* hdr_ = NULL;
-        struct hdr_histogram* hdr_last_1s_ = NULL;
-        struct hdr_histogram* hdr_get_= NULL;
-        struct hdr_histogram* hdr_put_= NULL;
-        struct hdr_histogram* hdr_update_ = NULL;
-        struct hdr_histogram* hdr_scan_ = NULL;
-        struct hdr_histogram* hdr_delete_ = NULL;
         //int wrapper_hdr_init(struct hdr_histogram** h);
         void latency_hiccup(uint64_t iops);
         // hdr output files in ./hdr
