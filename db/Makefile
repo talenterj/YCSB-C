@@ -1,10 +1,10 @@
-LEVELDB_INC=-I/home/xp/flying/leveldb-cuda/include 
-ROCKSDB_INC=-I/home/xp/flying/rocksdb-6.4.6/include -I/home/xp/flying/rocksdb-6.4.6/
-TITAN_INC=-I/home/xp/flying/titan/include 
+# LEVELDB_INC=-I/home/zhangxin/leveldb/include 
+ROCKSDB_INC=-I/home/zhangxin/rocksdb-zx/include -I/home/zhangxin/rocksdb-zx/
 LOCAL_INC=-I../
 
-LIB=-L../static
-INCLUDE=$(LEVELDB_INC) $(ROCKSDB_INC) $(TITAN_INC) $(LOCAL_INC)
+INCLUDE=$(ROCKSDB_INC) $(LOCAL_INC)
+
+LIB=-L/home/zhangxin/rocksdb-zx
 
 CC=g++
 CFLAGS=-std=c++11 -c -g -Wall -fgnu-tm
@@ -18,4 +18,3 @@ all: $(SOURCES) $(OBJECTS)
 
 clean:
 	$(RM) $(OBJECTS)
-
