@@ -11,7 +11,6 @@
 #include "core/properties.h"
 #include <rocksdb/db.h>
 #include "unistd.h"
-#include <hdr/hdr_histogram.h>
 #include <fstream>
 #include <sys/time.h>
 

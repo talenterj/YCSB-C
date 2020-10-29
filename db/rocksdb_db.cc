@@ -9,7 +9,6 @@
 #include "rocksdb/filter_policy.h"
 #include "rocksdb/table.h"
 #include "lib/coding.h"
-#include <hdr/hdr_histogram.h>
 #include <cstdio>
 #include <cstdlib>
 
