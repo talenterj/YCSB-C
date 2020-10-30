@@ -13,6 +13,7 @@
 #include "core/properties.h"
 #include "core/core_workload.h"
 
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <mutex>

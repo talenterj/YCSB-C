@@ -163,6 +163,8 @@ namespace ycsbc {
         if(write_sync_) {
             write_options.sync = true;
         }
+        fprintf(stdout, "key_size: %u, value_size: %u, values_num: %u.\n", 
+            key.length(), value.length(), values.size());
         s = db_->Put(write_options, key, value);
         if(!s.ok()){
             cerr<<"insert error\n"<<endl;
