@@ -6,6 +6,7 @@
 //    Copyright (c) 2014 Jinglei Ren <jinglei@ren.systems>.
 //
 
+#include <stdio.h>
 #include <cstring>
 #include <string>
 #include <iostream>
@@ -53,6 +54,7 @@ int DelegateClient(ycsbc::DB *db, ycsbc::CoreWorkload *wl, const int num_ops,
     }
     //db->PrintStats();
     //db->Close();
+    fprintf(stdout, "num_ops: %d, ok ops: %d.\n", num_ops, oks);
     return oks;
 }
 
