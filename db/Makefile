@@ -4,7 +4,7 @@ LOCAL_INC=-I../
 
 INCLUDE=$(ROCKSDB_INC) $(LOCAL_INC)
 
-LIB=-L/home/zhangxin/rocksdb-zx
+LIB=-L./static
 
 CC=g++
 CFLAGS=-std=c++11 -c -g -Wall -fgnu-tm
