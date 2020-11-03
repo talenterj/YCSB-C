@@ -135,6 +135,30 @@ string ParseCommandLine(int argc, const char *argv[], utils::Properties &props) 
             }
             props.SetProperty("dbname", argv[argindex]);
             argindex++;
+        } else if (strcmp(argv[argindex], "-multipath") == 0) {
+            argindex++;
+            if (argindex >= argc) {
+                UsageMessage(argv[0]);
+                exit(0);
+            }
+            props.SetProperty("multipath", argv[argindex]);
+            argindex++;
+        } else if (strcmp(argv[argindex], "-ttl") == 0) {
+            argindex++;
+            if (argindex >= argc) {
+                UsageMessage(argv[0]);
+                exit(0);
+            }
+            props.SetProperty("ttl", argv[argindex]);
+            argindex++;
+        } else if (strcmp(argv[argindex], "-walttl") == 0) {
+            argindex++;
+            if (argindex >= argc) {
+                UsageMessage(argv[0]);
+                exit(0);
+            }
+            props.SetProperty("walttl", argv[argindex]);
+            argindex++;
         } else if (strcmp(argv[argindex], "-host") == 0) {
             argindex++;
             if (argindex >= argc) {
