@@ -28,19 +28,19 @@ namespace ycsbc {
         const int multipath_option = stoi(props.GetProperty("multipath", "0"));
         const int ttl = stoi(props.GetProperty("ttl", "0"));
         const int walttl = stoi(props.GetProperty("walttl", "0"));
-        
+
         options->create_if_missing = true;
         options->report_bg_io_stats = true; // print more stats
 
         // hust-cloud
         options->ttl = ttl;
-        options->WAL_ttl_seconds = walttl;
+        options->use_wal_stage = true;
 
         // PingCAP default
         options->max_bytes_for_level_base = 512ul * 1024 * 1024;
         options->write_buffer_size = 128ul * 1024 * 1024;
         options->level0_file_num_compaction_trigger = 4;
-        options->dynamic_level_bytes = true;
+        options->level_compaction_dynamic_level_bytes = true;
         options->target_file_size_base = 8ul * 1024 * 1024;
         options->max_background_jobs = 4; // 4-8
 
@@ -49,20 +49,14 @@ namespace ycsbc {
         if (multipath_option == 0) {
             options->db_paths.push_back(rocksdb::DbPath("./path0", 256l * 1024 * 1024));
             options->db_paths.push_back(rocksdb::DbPath("./path1", 256l * 1024 * 1024));
-            options->db_paths.push_back(rocksdb::DbPath("./path2", 2560l * 1024 * 1024));
-            options->db_paths.push_back(rocksdb::DbPath("./path3", 25600l * 1024 * 1024));
         } else if (multipath_option == 1) {
             // 实验室服务器
             options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/ssd/rocksdb/path0", 256l * 1024 * 1024));
             options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/ssd/rocksdb/path1", 256l * 1024 * 1024));
-            options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/hdd/rocksdb/path2", 2560l * 1024 * 1024));
-            options->db_paths.push_back(rocksdb::DbPath("/mnt/zhangxin/hdd/rocksdb/path3", 25600l * 1024 * 1024));
         } else if (multipath_option == 2) {
             // PingCAP 172.16.5.35
             options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path0", 256l * 1024 * 1024));
             options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path1", 256l * 1024 * 1024));
-            options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path2", 2560l * 1024 * 1024));
-            options->db_paths.push_back(rocksdb::DbPath("/nvme1n1/zhangxin/ssd/path3", 25600l * 1024 * 1024));
         }
 
         //options->rate_limiter.reset(rocksdb::NewGenericRateLimiter(1000l * 1024 * 1024));
@@ -74,13 +68,6 @@ namespace ycsbc {
         //options->max_write_buffer_number = 2;
         //options->use_direct_reads = true;
         //options->use_direct_io_for_flush_and_compaction = true;
-
-        std::cout << "max_bytes_for_level_base: " << options->max_bytes_for_level_base << "\n";
-        std::cout << "max_bytes_for_level_multiplier: " << options->max_bytes_for_level_multiplier << "\n";
-        std::cout << "target_file_size_base: " << options->target_file_size_base << "\n";
-        std::cout << "max_background_jobs: " << options->max_background_jobs << "\n";
-        std::cout << "max_background_compactions: " << options->max_background_compactions << "\n";
-        std::cout << "max_background_flushes: " << options->max_background_flushes << "\n";
 
         /*
         //no block cache
