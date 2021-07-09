@@ -57,7 +57,7 @@ namespace ycsbc {
       cout << "DEBUG- histogram=" << &hdr_ << endl;
       cout << "DEBUG- counts_len=" << hdr_->counts_len << endl;
       cout << "DEBUG- counts:" << hdr_->counts << ", total_c:" << hdr_->total_count << endl;
-      cout << "DEBUG- lowest:" << hdr_->lowest_trackable_value << ", max:" <<hdr_->highest_trackable_value << endl;
+     // cout << "DEBUG- lowest:" << hdr_->lowest_trackable_value << ", max:" <<hdr_->highest_trackable_value << endl;
       free(hdr_);
       exit(0);
     }
