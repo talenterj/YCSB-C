@@ -4,13 +4,13 @@ ROCKSDB_INC=-I/home/dc/zcj/TRAID/include -I/home/dc/zcj/TRAID/
 # TITAN_INC=-I/home/xp/flying/titan/include
 LOCAL_INC=-I./
 
-INCLUDE=$(LEVELDB_INC) $(ROCKSDB_INCLUDE) $(TITAN_INC) $(LOCAL_INC)
+INCLUDE=$(ROCKSDB_INCLUDE) $(LOCAL_INC)
 
 LIB=-L./static
 
 CC=/usr/local/cuda-10.1/bin/nvcc
 CFLAGS=-std=c++11 #-pthread
-LDFLAGS= -lpthread -lrocksdb -lleveldb -ltitan -lhdr_histogram
+LDFLAGS= -lpthread -lrocksdb  -lhdr_histogram
 SUBDIRS= core db 
 SUBSRCS=$(wildcard core/*.cc) $(wildcard db/*.cc)
 OBJECTS=$(SUBSRCS:.cc=.o)
