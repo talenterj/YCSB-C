@@ -8,7 +8,7 @@ INCLUDE=$(ROCKSDB_INCLUDE) $(LOCAL_INC)
 
 LIB=-L./static
 
-CC=/usr/local/cuda-10.1/bin/nvcc
+CC=g++
 CFLAGS=-std=c++11 #-pthread
 LDFLAGS= -lpthread -lrocksdb  -lhdr_histogram
 SUBDIRS= core db 
