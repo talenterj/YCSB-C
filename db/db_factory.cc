@@ -11,8 +11,8 @@
 #include <string>
 #include "db/basic_db.h"
 #include "db/rocksdb_db.h"
-#include "db/leveldb_db.h"
-#include "db/titandb_db.h"
+//#include "db/leveldb_db.h"
+//#include "db/titandb_db.h"
 
 using namespace std;
 using ycsbc::DB;
