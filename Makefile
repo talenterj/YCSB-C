@@ -10,7 +10,7 @@ LIB=-L./static
 
 CC=g++
 CFLAGS=-std=c++11 #-pthread
-LDFLAGS= -lpthread -lrocksdb  -lhdr_histogram -lrt -lsnappy -lgflags -lz -lbz2 -llz4 -lzstd -ld -ljemallocl
+LDFLAGS= -lpthread -lrocksdb  -lhdr_histogram -lrt -lsnappy -lgflags -lz -lbz2 -llz4 -lzstd -ldl -ljemalloc
 SUBDIRS= core db 
 SUBSRCS=$(wildcard core/*.cc) $(wildcard db/*.cc)
 OBJECTS=$(SUBSRCS:.cc=.o)
