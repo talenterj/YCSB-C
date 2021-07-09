@@ -6,7 +6,7 @@ ROCKSDB_INC=-I/home/dc/zcj/TRAID/include -I/home/dc/zcj/TRAID/
 LOCAL_INC=-I../
 
 LIB=-L../static
-INCLUDE=$(LEVELDB_INC) $(ROCKSDB_INC) $(TITAN_INC) $(LOCAL_INC)
+INCLUDE=$(ROCKSDB_INC) $(LOCAL_INC)
 
 CC=g++
 CFLAGS=-std=c++11 -c -g -Wall -fgnu-tm
